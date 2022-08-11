@@ -18,15 +18,15 @@ exclude:
 
 plugins:
   - jekyll-feed
-  - jekyll-remote-theme
   - jekyll-include-cache
+  - jekyll-paginate
 
 # Jekyll configuration
 permalink:   /:title/
 
 # Build settings
 markdown: kramdown
-theme: "minimal-mistakes-jekyll"
+# theme: "minimal-mistakes-jekyll"
 remote_theme: "mmistakes/minimal-mistakes"
 minimal_mistakes_skin: "default"
   
@@ -75,7 +75,7 @@ defaults:
     values:
       toc: true
       toc_label: "Contents"
-      read_time: true
+      read_time: false
       comments: false
   # portfolio
   - scope:
