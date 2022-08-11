@@ -75,14 +75,14 @@ defaults:
     values:
       toc: true
       toc_label: "Contents"
-      read_time: false
-      comments: true
+      read_time: true
+      comments: false
   # portfolio
   - scope:
       path: ""
       type: portfolio
     values:
-      author_profile: false
+      # author_profile: true
       excerpt: ""
       sidebar:
         nav: "portfolio"
