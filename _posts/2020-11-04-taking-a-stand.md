@@ -1,5 +1,5 @@
 ---
-title: "Taking a Stand"
+title: "Test only Taking a Stand"
 excerpt: ""
 date: 2020-11-04
 categories:
