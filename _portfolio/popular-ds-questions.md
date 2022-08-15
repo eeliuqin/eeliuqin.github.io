@@ -1,5 +1,5 @@
 ---
-title: "The Most Popular Data Science Questions"
+title: "Finding the Most Popular Data Science Questions"
 header:
   image: /assets/images/data-world-map.png
   caption: "Photo credit: [**Gerd Altmann**](https://pixabay.com/illustrations/binary-code-globe-africa-1695478/)"
