@@ -1,45 +1,59 @@
 ---
 classes: wide
-header:
-  overlay_image: /assets/images/wind_turbine.png
-  caption: "Photo credit: [**Full Name**](https://unsplash.com)"
 permalink: /portfolio/index.html
-date: 2022-08-01
+last_modified_at: 2022/08/13
 
-feature_row:
-  - image_path: assets/images/wind_turbine.png
-    alt: "DeskAI"
-    title: "Test 1"
-    excerpt: "Des 1."
-    url: "/portfolio/deskai/"
-    btn_label: "Read More"
-    btn_class: "btn--primary"	
-  - image_path: /assets/images/wind_turbine.png
-    alt: "Music"
-    title: "Test 2"
-    excerpt: "Des 2."
-    url: "/portfolio/genre_cls/"
-    btn_label: "Read More"
-    btn_class: "btn--primary"	
-  - image_path: /assets/images/wind_turbine.png
-    alt: "Social Network"
-    title: "Test 3 "
-    excerpt: "Des 3."
-    url: "/portfolio/social-networks/"
-    btn_label: "Read More"
+
+feature_rows:
+- row_title: "Data Analysis with Python"
+  content:
+  - image_path: /assets/images/portfolio/popular-ds-questions.png
+    alt: "Data Science Questions"
+    title: "Finding the Most Popular Data Science Questions"
+    excerpt: "Python vs. R, which is more popular for data science?"
+    url: "/portfolio/popular-ds-questions/"
+
+  - image_path: /assets/images/portfolio/app-games.png
+    alt: "Mobile Games"
+    title: "Analyzing Strategy Games on Apple App Store"
+    excerpt: "What kind of strategy games are most welcomed?"
+    url: "/portfolio/mobile-strategy-games"
+
+- row_title: "Data Analysis with R"
+  content:
+  - image_path: /assets/images/portfolio/airbnb-negative-network.png
+    alt: "Airbnb Reviews"
+    title: "Text Mining and Sentiment Analysis for NYC Airbnb Reviews"
+    excerpt: "Why people leave positive/negative reviews?"
+    url: "/portfolio/airbnb-nyc-sentiment-analysis"
+
+  - image_path: /assets/images/portfolio/bike-share-routes.png
+    alt: "Bike Share"
+    title: "Case Study | Chicago Bike-Share Analysis"
+    excerpt: "How to turn casual riders to annual members?"
+    url: "/portfolio/google-da-capstone-project-bike-share/"
+
+
+- row_title: "Data Visualization with Tableau"
+  content:
+  - image_path: /assets/images/portfolio/tableau-pev-sales.png
+    alt: "Tableau EV Sales Story"
+    title: "U.S. Plug-in Electric Vehicles Sales"
+    excerpt: "Is Tesla leading in electric vehicles? Since when?"
+    url: "https://public.tableau.com/app/profile/qinliu/viz/2010-2019U_S_Plug-inElectricVehiclesPEVSales/PEVSalesStory"
+    btn_label: "View it in Tableau"
+    btn_class: "btn--primary" 
+
+  - image_path: /assets/images/portfolio/tableau-instacart-dataset.png
+    alt: "Tableau Instacart Dashboard"
+    title: "Instacart Market Basket Analysis"
+    excerpt: "Which products are reordered the most?"
+    url: "https://public.tableau.com/app/profile/qinliu/viz/Instacart-Market-Basket-Analysis-2017/Dashboard1"
+    btn_label: "View it in Tableau"
     btn_class: "btn--primary"
 ---
 
-# Portfolio
-
-Here you'll find summaries of the major projects I've done over the years, which
-are representative of my skills and interests. These projects span everything
-from mathematical physics to machine learning, from finance to advertising, from
-the theoretical to the practical.
+Here are some data analytics projects I've done. I will keep updating and adding some machine learning projects in the next few weeks. 
 
 
-<div align="center">
-  <h2>Selected Projects</h2>
-</div>
-
-{% include feature_row %}
+{% include feature_rows %}

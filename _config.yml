@@ -1,10 +1,8 @@
-# Configs for pwills.com
-
-title: "QL Portfolio"
-name: "QL Portfolio"
-email: test@gmail.com
-url: "http://qinliudata.github.io"
-repository: "qinliudata/qinliudata.github.io"
+title: "Qin Liu"
+name: "Qin Liu"
+email: eeliuqin@gmail.com
+url: "http://eeliuqin.github.io"
+repository: "eeliuqin/eeliuqin.github.io"
 
 include:
   - _pages
@@ -24,28 +22,23 @@ plugins:
 # Jekyll configuration
 permalink:   /:title/
 
+
 # Build settings
 markdown: kramdown
 # theme: "minimal-mistakes-jekyll"
 remote_theme: "mmistakes/minimal-mistakes"
 minimal_mistakes_skin: "default"
+breadcrumbs: true
   
 # settings for author profile
 author:
   name   : "Qin Liu"
-  avatar : "/assets/images/headshot.png"
-  bio    : "Exploring the world by analyzing data."
+  avatar : "/assets/images/ql-head.jpg"
+  bio    : "Interested in data analytics & data science."
   location: "California"
-  github : qinliudata
-  linkedin: qinliudata
-  email  : test@gmail.com
-
-
-# # comments by disqus
-# comments:
-#   provider: "disqus"
-#   disqus:
-#     shortname: "pwills-com"
+  github : eeliuqin
+  linkedin: qinliu0891
+  email  : eeliuqin@gmail.com
 
 analytics:
   provider: "google"
