@@ -57,7 +57,6 @@ theme_set(
 )
 ```
 
-
 ### <a id="importing">2.2 Importing the data</a>
 
 
@@ -113,6 +112,7 @@ dim(df)
 ```R
 985674 · 6
 ```
+
 
 **Summary statistics**
 
@@ -579,25 +579,47 @@ df_reviews_en <- df_reviews %>%
 df_reviews_es_fr <- df_reviews %>% 
   filter(language %in% c("spanish", "french"))
 
-words <- df_reviews_en %>%
-  mutate(line_num = row_number()) %>% 
-  unnest_tokens(word, reviews, drop = FALSE) %>%
-  distinct(line_num, word, .keep_all = TRUE) %>%
-  anti_join(stop_words, by = "word") %>% # ignore stop words 
-  filter(str_detect(word, "[^\\d]")) %>% 
-  group_by(word) %>%
-  mutate(word_total = n()) %>%
-  ungroup()
+# create function to generate word tokens of reviews
+generate_words <- function(df) {
+  words <- df %>%
+    mutate(line_num = row_number()) %>% 
+    unnest_tokens(word, reviews, drop = FALSE) %>%
+    distinct(line_num, word, .keep_all = TRUE) %>%
+    anti_join(stop_words, by = "word") %>% # ignore stop words 
+    filter(str_detect(word, "[^\\d]"))
+  return(words)
+}
 
-words %>%
-    count(word, sort = TRUE) %>% 
-    head(20) %>%
-    mutate(word = reorder(word, n)) %>% 
-    ggplot(aes(word, n, fill = -n)) +
-    geom_col() +
-    coord_flip() +
-    theme(legend.position = "none") +
-    labs(y = "# of uses", title = "Top 20 most common English words in NYC Airbnb reviews")
+barplot_word_freq <- function(words, n_rank=20, title, facet_wrap_language=FALSE, colors) {
+  if (!facet_wrap_language) {
+    words %>%
+      count(word, sort = TRUE) %>% 
+      head(n_rank) %>%
+      mutate(word = reorder(word, n)) %>% 
+      ggplot(aes(word, n, fill = -n)) +
+      geom_col() +
+      coord_flip() +
+      theme(legend.position = "none") +
+      labs(y = "# of uses", title = title) 
+  } else {
+    words %>%
+      count(language, word, sort = TRUE) %>% 
+      group_by(language) %>%
+      top_n(n_rank) %>%
+      mutate(word = reorder(word, n)) %>% 
+      ggplot(aes(word, n, fill = language)) +
+      scale_fill_manual(values = colors) +
+      geom_col() +
+      coord_flip() +
+      facet_wrap(~ language, scales = "free") + 
+      theme(legend.position = "none") +
+      labs(y = "# of uses", title = title)
+  }
+}
+
+words <- generate_words(df_reviews_en)
+
+barplot_word_freq(words, 20, "Top 20 most common English words in NYC Airbnb reviews")
 ```
 
 
@@ -610,27 +632,12 @@ words %>%
 
 
 ```R
-es_fr_words <- df_reviews_es_fr %>%
-  mutate(line_num = row_number()) %>% 
-  unnest_tokens(word, reviews, drop = FALSE) %>%
-  distinct(line_num, word, .keep_all = TRUE) %>%
-  anti_join(stop_words, by = "word") %>% # ignore stop words 
-  filter(str_detect(word, "[^\\d]"))
-
 es_fr_colors <- c("#4773aa", "#f9c642")
 
-es_fr_words %>%
-    count(language, word, sort = TRUE) %>% 
-    group_by(language) %>%
-    top_n(5) %>%
-    mutate(word = reorder(word, n)) %>% 
-    ggplot(aes(word, n, fill = language)) +
-    scale_fill_manual(values = es_fr_colors) +
-    geom_col() +
-    coord_flip() +
-    facet_wrap(~ language, scales = "free") + 
-    theme(legend.position = "none") +
-    labs(y = "# of uses", title = "Top 5 most common French/Spanish words in reviews")
+es_fr_words <- generate_words(df_reviews_es_fr)
+
+barplot_word_freq(es_fr_words, 5, "Top 5 most common French/Spanish words in reviews",
+                 facet_wrap_language=TRUE, es_fr_colors)
 ```
 
     
@@ -652,13 +659,14 @@ Let's continue our analysis and see if we can find evidence to support that assu
 
 
 ```R
-# create function to count word monthly percentage
-count_monthly_word <- function (df, words) {
+# plot monthly trend of selected words
+plot_word_trend <- function (df, words, word_filter, title) {
   reviews_per_month <- df %>%
     mutate(month = round_date(date, "month")) %>% 
     group_by(month) %>%
     summarize(month_total = n())
 
+  # count word monthly percentage
   word_month_counts <- words %>%
     mutate(month = round_date(date, "month")) %>% 
     count(word, month) %>%
@@ -666,26 +674,24 @@ count_monthly_word <- function (df, words) {
     inner_join(reviews_per_month, by = "month") %>%
     mutate(percent = n / month_total) %>%
     mutate(year = year(month) + yday(month) / 365) 
-    
-  return(word_month_counts)
+
+  word_month_counts %>%
+    filter(word %in% word_filter) %>%
+    ggplot(aes(month, n / month_total, color = word)) +
+    geom_line(size = 1, alpha = .8) +
+    scale_y_continuous(labels = percent_format()) +
+    facet_wrap(~ word, scales = "free_y") +
+    expand_limits(y = 0) +
+    theme(legend.position = "none") +
+    labs(x = "Year",
+         y = "Percentage of reviews containing this term", 
+         title = title)    
 }
 
 # The top 5 most common words + "subway" (the most common words in French and Spanish)
-imp_en_words <- c("stay", "clean", "location", "apartment", "host", "subway")
+en_word_filter <- c("stay", "clean", "location", "apartment", "host", "subway")
 
-word_month_counts <- count_monthly_word(df_reviews_en, words)
-
-word_month_counts %>%
-  filter(word %in% imp_en_words) %>%
-  ggplot(aes(month, n / month_total, color = word)) +
-  geom_line(size = 1, alpha = .8) +
-  scale_y_continuous(labels = percent_format()) +
-  facet_wrap(~ word, scales = "free_y") +
-  expand_limits(y = 0) +
-  theme(legend.position = "none") +
-  labs(x = "Year",
-       y = "Percentage of reviews containing this term", 
-       title = "Trends of most common English words in reviews")
+plot_word_trend(df_reviews_en, words, en_word_filter, "Trends of most common English words in reviews")
 ```
 
 
@@ -702,21 +708,10 @@ Let's find out the trends of most common French/Spanish words.
 
 
 ```R
-imp_es_fr_words <- c("métro", "appartement", "séjour", "metro", "cerca", "lugar")
+# Top 3 most common French/Spanish words
+es_fr_word_filter <- c("métro", "appartement", "séjour", "metro", "cerca", "lugar")
 
-word_month_counts_es_fr <- count_monthly_word(df_reviews_es_fr, es_fr_words)
-
-word_month_counts_es_fr %>%
-  filter(word %in% imp_es_fr_words) %>%
-  ggplot(aes(month, n / month_total, color = word)) +
-  geom_line(size = 1, alpha = .8) +
-  scale_y_continuous(labels = percent_format()) +
-  facet_wrap(~ word, scales = "free_y") +
-  expand_limits(y = 0) +
-  theme(legend.position = "none") +
-  labs(x = "Year",
-       y = "Percentage of reviews containing this term", 
-       title = "Trends of most common French/Spanish words in reviews")
+plot_word_trend(df_reviews_es_fr, es_fr_words, es_fr_word_filter, "Trends of most common French/Spanish words in reviews")
 ```
 
 
@@ -795,7 +790,7 @@ review_bigrams_es_fr %>%
   labs(y = "# of uses", title = "Top 5 most common French/Spanish bigrams in reviews")
 ```
 
-
+  
 ![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_57_1.png)
     
 
@@ -827,7 +822,7 @@ ggraph(bigram_graph, layout = "fr") +
   labs(title = "Network of bigrams in NYC Airbnb reviews")
 ```
 
-   
+    
 ![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_59_1.png)
     
 
@@ -898,7 +893,6 @@ review_trigrams_es_fr %>%
   theme(legend.position = "none") +
   labs(y = "# of uses", title = "Top 5 most common French/Spanish trigrams in reviews")
 ```
-
     
 ![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_65_1.png)
     
@@ -910,25 +904,30 @@ French/Spanish trigrams (the top 2 are "value for money" and "good value") are n
 
 The key phrase "minute walk"(and "min walk") show up in both common bigrams and trigrams, which indicates many reviewers walk and they care about the walking time. Let's visualize the walking starting and ending points by wordclouds.
 
-**Walking starting points**
+#### Walking starting points
 
 
 ```R
-toks_en <- tokens(df_reviews_en$reviews)
-# get sentences
-kw_start_en <- kwic(toks_en, pattern = c(phrase("minute walk from*"), 
-                                         phrase("min walk from*"),
-                                         phrase("minutes walk from*"),
-                                         phrase("mins walk from*")))
+start_keywords <- c(phrase("minute walk from*"), 
+                    phrase("min walk from*"),
+                    phrase("minutes walk from*"),
+                    phrase("mins walk from*"))
 
-# group by start points
-start_points <- kw_start_en %>% 
-  unnest_tokens(word, post, drop = FALSE) %>% 
-  anti_join(stop_words, by = "word") %>% 
-  filter(str_detect(word, "[^\\d]")) %>% 
-  count(word, sort = TRUE)
+wordcloud_by_keywords <- function(df, keywords) {
+  review_tokens <- tokens(df$reviews)      
+  # get sentences
+  kw <- kwic(review_tokens, pattern = keywords)  
+  # group by start points
+  word_count <- kw %>% 
+    unnest_tokens(word, post, drop = FALSE) %>% 
+    anti_join(stop_words, by = "word") %>% 
+    filter(str_detect(word, "[^\\d]")) %>% 
+    count(word, sort = TRUE)
 
-wordcloud2(start_points, rotateRatio = 0, widgetsize =c("700","350"))
+  wordcloud2(word_count, rotateRatio = 0, widgetsize =c("700","350"))    
+}
+
+wordcloud_by_keywords(df_reviews_en, start_keywords)
 ```
 
 
@@ -943,31 +942,23 @@ wordcloud2(start_points, rotateRatio = 0, widgetsize =c("700","350"))
 <script title="wordcloud2-binding" src="data:application/javascript;base64,SFRNTFdpZGdldHMud2lkZ2V0KHsKCiAgbmFtZTogJ3dvcmRjbG91ZDInLAoKICB0eXBlOiAnb3V0cHV0JywKCiAgaW5pdGlhbGl6ZTogZnVuY3Rpb24oZWwsIHdpZHRoLCBoZWlnaHQpIHsKICAgIHZhciBuZXdDYW52YXMgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCJjYW52YXMiKTsKICAgIG5ld0NhbnZhcy5oZWlnaHQgPSBoZWlnaHQ7CiAgICBuZXdDYW52YXMud2lkdGggPSB3aWR0aDsKICAgIG5ld0NhbnZhcy5pZCA9ICJjYW52YXMiOwoKICAgIGVsLmFwcGVuZENoaWxkKG5ld0NhbnZhcyk7CiAgICBuZXdsYWJlbChlbCk7CiAgICByZXR1cm4oZWwuZmlyc3RDaGlsZCk7CiAgfSwKICByZW5kZXJWYWx1ZTogZnVuY3Rpb24oZWwsIHgsIGluc3RhbmNlKSB7CiAgLy8gcGFyc2UgZ2V4ZiBkYXRhCiAgICAgICAgbGlzdERhdGE9W107CiAgICAgICAgZm9yKHZhciBpPTA7IGk8eC53b3JkLmxlbmd0aDsgaSsrKXsKICAgICAgICAgIGxpc3REYXRhLnB1c2goW3gud29yZFtpXSwgeC5mcmVxW2ldXSk7CiAgICAgICAgfQogICAgIGlmKHguZmlnQmFzZTY0KXsKCiAgICAgICAgbWFza0luaXQoZWwseCk7CiAgICAgICAgY29uc29sZS5sb2coMykKCiAgICAgIH1lbHNlewogICAgICAgIFdvcmRDbG91ZChlbC5maXJzdENoaWxkLCB7IGxpc3Q6IGxpc3REYXRhLAogICAgICAgICAgICAgICAgICAgICAgICBmb250RmFtaWx5OiB4LmZvbnRGYW1pbHksCiAgICAgICAgICAgICAgICAgICAgICAgIGZvbnRXZWlnaHQ6IHguZm9udFdlaWdodCwKICAgICAgICAgICAgICAgICAgICAgICAgY29sb3I6IHguY29sb3IsCiAgICAgICAgICAgICAgICAgICAgICAgIG1pblNpemU6IHgubWluU2l6ZSwKICAgICAgICAgICAgICAgICAgICAgICAgd2VpZ2h0RmFjdG9yOiB4LndlaWdodEZhY3RvciwKICAgICAgICAgICAgICAgICAgICAgICAgYmFja2dyb3VuZENvbG9yOiB4LmJhY2tncm91bmRDb2xvciwKICAgICAgICAgICAgICAgICAgICAgICAgZ3JpZFNpemU6IHguZ3JpZFNpemUsCiAgICAgICAgICAgICAgICAgICAgICAgIG1pblJvdGF0aW9uOiB4Lm1pblJvdGF0aW9uLAogICAgICAgICAgICAgICAgICAgICAgICBtYXhSb3RhdGlvbjogeC5tYXhSb3RhdGlvbiwKICAgICAgICAgICAgICAgICAgICAgICAgc2h1ZmZsZTogeC5zaHVmZmxlLAogICAgICAgICAgICAgICAgICAgICAgICBzaGFwZTogeC5zaGFwZSwKICAgICAgICAgICAgICAgICAgICAgICAgcm90YXRlUmF0aW86IHgucm90YXRlUmF0aW8sCiAgICAgICAgICAgICAgICAgICAgICAgIGVsbGlwdGljaXR5OiB4LmVsbGlwdGljaXR5LAogICAgICAgICAgICAgICAgICAgICAgICBkcmF3TWFzazogeC5kcmF3TWFzaywKICAgICAgICAgICAgICAgICAgICAgICAgbWFza0NvbG9yOiB4Lm1hc2tDb2xvciwKICAgICAgICAgICAgICAgICAgICAgICAgbWFza0dhcFdpZHRoOiB4Lm1hc2tHYXBXaWR0aCwKICAgICAgICAgICAgICAgICAgICAgICAgaG92ZXI6IHguaG92ZXIgfHwgY3ZfaGFuZGxlSG92ZXIKICAgICAgICAgICAgICAgICAgICAgICAgfSk7CiAgICAgIH0KICAgIH0sCiAgICAgIHJlc2l6ZTogZnVuY3Rpb24oZWwsIHdpZHRoLCBoZWlnaHQpIHsKICAgICAgfQoKfSk7Cg=="></script>
 	</head>
 	<body>
-		<div id="htmlwidget-e325aa60956ef367ed35" style="width:700px;height:350px;" class="wordcloud2 html-widget"></div>
-<script type="application/json" data-for="htmlwidget-e325aa60956ef367ed35">{"x":{"word":["subway","station","apartment","train","house","metro","square","park","nearest","line","stop","central","takes","bus","stations","times","restaurants","time","avenue","lines","prospect","apt","close","easy","grand","main","penn","st","ave","beach","ferry","minutes","neighborhood","street","closest","lots","manhattan","min","nice","north","quiet","stops","subways","access","bars","bedford","broadway","brooklyn","building","center","convenient","flat","friendly","grocery","island","property","recommend","stores","union","103rd","ac","astor","av","beautiful","bridge","church","clean","columbia","communication","connects","couple","delis","directly","doorstep","dumbo","edge","enjoyed","express","front","greenwich","highly","home","hospital","host","hosts","location","loved","major","mins","minute","nostrand","parkside","path","pennsylvania","plenty","public","shops","soho","stadium","staten","stay","store","super","trains","trendy","tube","underground","university","view","village","water","williamsburg","yankee","100s","125th","145th","30th","3rd","42nd","46th","4av","72st","7th","accessibility","accommodating","accommodation","airbnb","airbnb.had","airport","amazing","amazon","anthony","astoria","awesome","backyard","barclay","barclays","bayside","beast","bed","beech","beverley","bit","blowing","boardwalk","boulevard","boundary","breakfast","brilliant","brings","bucky","bungalow","buses","busses","bustling","calm","catch","central.fifth","chelsea","cil's","circle","citibike","closet","coffee","columbus","comedy","communicating","commuter","condo","connected","connecting","connection","convenience","convention","core","costs","could'nt","countless","covid","ctr","dan","daughter's","deirdre","delancey","delton","direct","district","donut","door","east","eat","elmhurst","empire","essex","extremely","fairly","fast","flatbush","flushing","food","found","franklin","fun","garden","giant","giving","gowanus","grasmere","green","greenpoint","gripe","guardia","guest","gym","hanging","happening","harlem","helpful","historic","honored","hope","iconic","ideal","incredibility","incredibly","jason's","jeff's","jewel","jody's","john","kew","kim's","kingston","lead","links","local","located","locations","lowery","makes","mall","marcy","market","markets","met","michael","mind","msg","multiple","myrtle","nassau","newkirk","northern","numerous","nyp","offers","orange","orhun's","pan","pastry","people","perfect","peter","pictures","port","pretty","price","promenade","purple","queens","rail","ramon","randall's","recommended","red","restaurant","road","roosevelt","route","run","sadie","safe","sara's","serves","shopping","skyline","slope","space","sq","sqr","steps","straightforward","streets","subwaystation","supermarket","supermarkets","svjetlana","taxi","terminal","testing","that'll","theater","throop","throwing","timo","top","trade","transit","transportation","travis","trip","typically","udo","uncomfortable","und","utica","variety","vegan","vessel","views","vinneth","walk","walkable","walked","washington","waterfront","weekends","wich","wil","woodhaven","world","yang","youssef","zain"],"freq":[221,130,58,54,25,23,23,22,20,19,19,18,16,15,15,13,10,8,7,7,7,6,6,6,6,6,6,6,5,5,5,5,5,5,4,4,4,4,4,4,4,4,4,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"fontFamily":"Segoe UI","fontWeight":"bold","color":"random-dark","minSize":0,"weightFactor":0.81447963800905,"backgroundColor":"white","gridSize":0,"minRotation":-0.785398163397448,"maxRotation":0.785398163397448,"shuffle":true,"rotateRatio":0,"shape":"circle","ellipticity":0.65,"figBase64":null,"hover":null},"evals":[],"jsHooks":{"render":[{"code":"function(el,x){\n                        console.log(123);\n                        if(!iii){\n                          window.location.reload();\n                          iii = False;\n\n                        }\n  }","data":null}]}}</script>
+		<div id="htmlwidget-2324bbc59414d78ee379" style="width:700px;height:350px;" class="wordcloud2 html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2324bbc59414d78ee379">{"x":{"word":["subway","station","apartment","train","house","metro","square","park","nearest","line","stop","central","takes","bus","stations","times","restaurants","time","avenue","lines","prospect","apt","close","easy","grand","main","penn","st","ave","beach","ferry","minutes","neighborhood","street","closest","lots","manhattan","min","nice","north","quiet","stops","subways","access","bars","bedford","broadway","brooklyn","building","center","convenient","flat","friendly","grocery","island","property","recommend","stores","union","103rd","ac","astor","av","beautiful","bridge","church","clean","columbia","communication","connects","couple","delis","directly","doorstep","dumbo","edge","enjoyed","express","front","greenwich","highly","home","hospital","host","hosts","location","loved","major","mins","minute","nostrand","parkside","path","pennsylvania","plenty","public","shops","soho","stadium","staten","stay","store","super","trains","trendy","tube","underground","university","view","village","water","williamsburg","yankee","100s","125th","145th","30th","3rd","42nd","46th","4av","72st","7th","accessibility","accommodating","accommodation","airbnb","airbnb.had","airport","amazing","amazon","anthony","astoria","awesome","backyard","barclay","barclays","bayside","beast","bed","beech","beverley","bit","blowing","boardwalk","boulevard","boundary","breakfast","brilliant","brings","bucky","bungalow","buses","busses","bustling","calm","catch","central.fifth","chelsea","cil's","circle","citibike","closet","coffee","columbus","comedy","communicating","commuter","condo","connected","connecting","connection","convenience","convention","core","costs","could'nt","countless","covid","ctr","dan","daughter's","deirdre","delancey","delton","direct","district","donut","door","east","eat","elmhurst","empire","essex","extremely","fairly","fast","flatbush","flushing","food","found","franklin","fun","garden","giant","giving","gowanus","grasmere","green","greenpoint","gripe","guardia","guest","gym","hanging","happening","harlem","helpful","historic","honored","hope","iconic","ideal","incredibility","incredibly","jason's","jeff's","jewel","jody's","john","kew","kim's","kingston","lead","links","local","located","locations","lowery","makes","mall","marcy","market","markets","met","michael","mind","msg","multiple","myrtle","nassau","newkirk","northern","numerous","nyp","offers","orange","orhun's","pan","pastry","people","perfect","peter","pictures","port","pretty","price","promenade","purple","queens","rail","ramon","randall's","recommended","red","restaurant","road","roosevelt","route","run","sadie","safe","sara's","serves","shopping","skyline","slope","space","sq","sqr","steps","straightforward","streets","subwaystation","supermarket","supermarkets","svjetlana","taxi","terminal","testing","that'll","theater","throop","throwing","timo","top","trade","transit","transportation","travis","trip","typically","udo","uncomfortable","und","utica","variety","vegan","vessel","views","vinneth","walk","walkable","walked","washington","waterfront","weekends","wich","wil","woodhaven","world","yang","youssef","zain"],"freq":[221,130,58,54,25,23,23,22,20,19,19,18,16,15,15,13,10,8,7,7,7,6,6,6,6,6,6,6,5,5,5,5,5,5,4,4,4,4,4,4,4,4,4,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"fontFamily":"Segoe UI","fontWeight":"bold","color":"random-dark","minSize":0,"weightFactor":0.81447963800905,"backgroundColor":"white","gridSize":0,"minRotation":-0.785398163397448,"maxRotation":0.785398163397448,"shuffle":true,"rotateRatio":0,"shape":"circle","ellipticity":0.65,"figBase64":null,"hover":null},"evals":[],"jsHooks":{"render":[{"code":"function(el,x){\n                        console.log(123);\n                        if(!iii){\n                          window.location.reload();\n                          iii = False;\n\n                        }\n  }","data":null}]}}</script>
 	</body>
 </html>
 
 
 
-**Walking ending points**
+#### Walking ending points
 
 
 ```R
-# get sentences
-kw_end_en <- kwic(toks_en, pattern = c(phrase("minute walk to*"), 
-                                       phrase("min walk to*"),
-                                       phrase("minutes walk to*"),
-                                       phrase("mins walk to*")))
+end_keywords <- c(phrase("minute walk to*"),
+                  phrase("min walk to*"),
+                  phrase("minutes walk to*"),
+                  phrase("mins walk to*"))
 
-# group by end points
-end_points <- kw_end_en %>% 
-  unnest_tokens(word, post, drop = FALSE) %>% 
-  anti_join(stop_words, by = "word") %>% 
-  filter(str_detect(word, "[^\\d]")) %>% 
-  count(word, sort = TRUE)
-
-wordcloud2(end_points, rotateRatio = 0, widgetsize =c("700","350"))
+wordcloud_by_keywords(df_reviews_en, end_keywords)
 ```
 
 
@@ -982,14 +973,14 @@ wordcloud2(end_points, rotateRatio = 0, widgetsize =c("700","350"))
 <script title="wordcloud2-binding" src="data:application/javascript;base64,SFRNTFdpZGdldHMud2lkZ2V0KHsKCiAgbmFtZTogJ3dvcmRjbG91ZDInLAoKICB0eXBlOiAnb3V0cHV0JywKCiAgaW5pdGlhbGl6ZTogZnVuY3Rpb24oZWwsIHdpZHRoLCBoZWlnaHQpIHsKICAgIHZhciBuZXdDYW52YXMgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCJjYW52YXMiKTsKICAgIG5ld0NhbnZhcy5oZWlnaHQgPSBoZWlnaHQ7CiAgICBuZXdDYW52YXMud2lkdGggPSB3aWR0aDsKICAgIG5ld0NhbnZhcy5pZCA9ICJjYW52YXMiOwoKICAgIGVsLmFwcGVuZENoaWxkKG5ld0NhbnZhcyk7CiAgICBuZXdsYWJlbChlbCk7CiAgICByZXR1cm4oZWwuZmlyc3RDaGlsZCk7CiAgfSwKICByZW5kZXJWYWx1ZTogZnVuY3Rpb24oZWwsIHgsIGluc3RhbmNlKSB7CiAgLy8gcGFyc2UgZ2V4ZiBkYXRhCiAgICAgICAgbGlzdERhdGE9W107CiAgICAgICAgZm9yKHZhciBpPTA7IGk8eC53b3JkLmxlbmd0aDsgaSsrKXsKICAgICAgICAgIGxpc3REYXRhLnB1c2goW3gud29yZFtpXSwgeC5mcmVxW2ldXSk7CiAgICAgICAgfQogICAgIGlmKHguZmlnQmFzZTY0KXsKCiAgICAgICAgbWFza0luaXQoZWwseCk7CiAgICAgICAgY29uc29sZS5sb2coMykKCiAgICAgIH1lbHNlewogICAgICAgIFdvcmRDbG91ZChlbC5maXJzdENoaWxkLCB7IGxpc3Q6IGxpc3REYXRhLAogICAgICAgICAgICAgICAgICAgICAgICBmb250RmFtaWx5OiB4LmZvbnRGYW1pbHksCiAgICAgICAgICAgICAgICAgICAgICAgIGZvbnRXZWlnaHQ6IHguZm9udFdlaWdodCwKICAgICAgICAgICAgICAgICAgICAgICAgY29sb3I6IHguY29sb3IsCiAgICAgICAgICAgICAgICAgICAgICAgIG1pblNpemU6IHgubWluU2l6ZSwKICAgICAgICAgICAgICAgICAgICAgICAgd2VpZ2h0RmFjdG9yOiB4LndlaWdodEZhY3RvciwKICAgICAgICAgICAgICAgICAgICAgICAgYmFja2dyb3VuZENvbG9yOiB4LmJhY2tncm91bmRDb2xvciwKICAgICAgICAgICAgICAgICAgICAgICAgZ3JpZFNpemU6IHguZ3JpZFNpemUsCiAgICAgICAgICAgICAgICAgICAgICAgIG1pblJvdGF0aW9uOiB4Lm1pblJvdGF0aW9uLAogICAgICAgICAgICAgICAgICAgICAgICBtYXhSb3RhdGlvbjogeC5tYXhSb3RhdGlvbiwKICAgICAgICAgICAgICAgICAgICAgICAgc2h1ZmZsZTogeC5zaHVmZmxlLAogICAgICAgICAgICAgICAgICAgICAgICBzaGFwZTogeC5zaGFwZSwKICAgICAgICAgICAgICAgICAgICAgICAgcm90YXRlUmF0aW86IHgucm90YXRlUmF0aW8sCiAgICAgICAgICAgICAgICAgICAgICAgIGVsbGlwdGljaXR5OiB4LmVsbGlwdGljaXR5LAogICAgICAgICAgICAgICAgICAgICAgICBkcmF3TWFzazogeC5kcmF3TWFzaywKICAgICAgICAgICAgICAgICAgICAgICAgbWFza0NvbG9yOiB4Lm1hc2tDb2xvciwKICAgICAgICAgICAgICAgICAgICAgICAgbWFza0dhcFdpZHRoOiB4Lm1hc2tHYXBXaWR0aCwKICAgICAgICAgICAgICAgICAgICAgICAgaG92ZXI6IHguaG92ZXIgfHwgY3ZfaGFuZGxlSG92ZXIKICAgICAgICAgICAgICAgICAgICAgICAgfSk7CiAgICAgIH0KICAgIH0sCiAgICAgIHJlc2l6ZTogZnVuY3Rpb24oZWwsIHdpZHRoLCBoZWlnaHQpIHsKICAgICAgfQoKfSk7Cg=="></script>
 	</head>
 	<body>
-		<div id="htmlwidget-b7a24e13a89d79873ac5" style="width:700px;height:350px;" class="wordcloud2 html-widget"></div>
-<script type="application/json" data-for="htmlwidget-b7a24e13a89d79873ac5">{"x":{"word":["subway","station","train","nearest","metro","park","square","central","times","line","takes","bus","restaurants","stop","stations","ferry","beach","lines","manhattan","minutes","trains","st","brooklyn","avenue","grocery","ave","closest","min","close","easy","main","prospect","shops","subways","apartment","center","broadway","food","grand","lots","minute","street","bridge","convenient","downtown","express","host","neighborhood","nice","path","public","union","walk","access","direct","stops","terminal","williamsburg","columbia","island","mins","safe","soho","stores","supermarket","bars","catch","clean","district","essex","flushing","hosts","local","mta","multiple","museum","parking","plenty","recommend","stadium","straight","university","125th","barclays","beautiful","bedford","building","city","coffee","connect","decent","delancey","east","empire","franklin","fulton","gates","house","links","lirr","lorimer","major","makes","marcy","market","met","penn","pretty","quick","restaurant","ride","short","staten","store","super","supermarkets","time","transport","transportation","underground","utica","view","washington","wonderful","116th","7th","accessible","ace","additionally","amazing","astor","bed","bergen","boardwalk","botanical","brings","called","check","chinatown","coney","couple","danielle","delis","dollar","family","forest","friendly","ft","green","greene","heart","hipster","hospital","hudson","jfk","location","lot","loved","montrose","nearby","nostrand","nyc","peaceful","pier","pl","promenade","red","river","rockaway","rockefeller","shopping","site","space","spots","stay","taking","ten","theater","theatre","trail","water","waterfront","wholefoods","yankee","1,2,3","110th","14th","157th","15th","1h","1st","2,3","20min","24h","33rd","36th","4,5,6","45mins","4th","5th","9th","ac","accessibility","accommodating","aircraft","alex","allowed","amenities","approx","approximately","apt","arrived","arthur","ashe","astoria","atlantic","attractions","authority","av","b6","bad","barclay's","battery","bayside","beat","beneath","bikes","blooming","bodegas","boroughs","bound","boutiques","bowery","breakfast","brighton","briskly","brooklyn's","brought","built","busses","bustling","busy","buy","cafe","cafes","campuses","carnarsie","carrier","centre","checking","chelsea","church","cil","citi","clinton","coffe","coffeeshops","coin","comfortable","communicated","communication","commute","concourse","connections","conveniently","cool","corner","costco","cozy","crowded","cute","cyprus","david","decor","dekalb","deli","depending","diner","direction","directly","ditmar","donut","dorina","downstairs","drink","earl","easily","eating","eats","eddie","elma","entrance","equinox","essentially","euclid","excellent","excels","exchange","experience","fantastic","ferries","fifteen","financial","fine","flea","foods","fort","frequent","friend","fun","garden","giselle","gorgeous","grab","graham","grounds","grove","gun","halsey","harbor","head","heading","heather","heights","helpful","her's","herald","highline","highly","highway","hill","hills","home","hours","hub","huge","ideally","including","incredible","india","insanely","intrepid","isnt","jaime","jan","javits","jc","jeevan","jmz","joanna","joe","john's","junction","kai","kids","kings","lane","laundry","laurelton","leading","leads","leaves","lexington","lexingtown","lga","listing","literally","love","lovely","lower","m60","macys","mango","mark","marlow's","mart","master","meadows","memorial","metropolitan","michal","middle","mike's","mile","milstein","mini","monica's","montague","morgan","morning","mount","musuem","myrtle","nanonte","natural","neighbourhood","nook","nordstrom","north","noted","numerous","opera","parents","parks","parkway","perfect","perk","pharmacy","piers","pleased","port","private","proper","q30","queen","quiet","railway","reachable","refreshed","regularly","rentals","responded","restuarants","riverside","rosedale","samira","scene","scenic","section","selection","service","serviced","shop","shoreline","shower","shuttle","sights","sinai","sirr","sites","situated","skyline","slope","son's","spacious","sq","squares","stairs","starbuck","starbucks","staying","stays","steinway","stn","stuck","stuyvesant","subway.moe","superstore","surf","suzette","swann","system","tacos","target","taste","taxi","terrace","thé","theaters","theatres","ti.es","timo","tiwn","tons","tony","tourist","tournament","town","trade","trader","traders","trails","transit","travelling","tremont","trendy","true","und","uptown","van","views","walgreens","walls","west","whimsical","wifi","williamsberg","wilson's","world","worth","wyckoff","yana's","yankees","york","zerega"],"freq":[500,223,156,56,50,48,45,36,33,32,32,31,27,24,23,18,17,16,16,16,16,14,13,12,12,11,11,11,10,10,10,10,10,10,9,9,8,8,8,8,8,8,7,7,7,7,7,7,7,7,7,7,7,6,6,6,6,6,5,5,5,5,5,5,5,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"fontFamily":"Segoe UI","fontWeight":"bold","color":"random-dark","minSize":0,"weightFactor":0.36,"backgroundColor":"white","gridSize":0,"minRotation":-0.785398163397448,"maxRotation":0.785398163397448,"shuffle":true,"rotateRatio":0,"shape":"circle","ellipticity":0.65,"figBase64":null,"hover":null},"evals":[],"jsHooks":{"render":[{"code":"function(el,x){\n                        console.log(123);\n                        if(!iii){\n                          window.location.reload();\n                          iii = False;\n\n                        }\n  }","data":null}]}}</script>
+		<div id="htmlwidget-e6c4aed27ff7bc97cfa6" style="width:700px;height:350px;" class="wordcloud2 html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e6c4aed27ff7bc97cfa6">{"x":{"word":["subway","station","train","nearest","metro","park","square","central","times","line","takes","bus","restaurants","stop","stations","ferry","beach","lines","manhattan","minutes","trains","st","brooklyn","avenue","grocery","ave","closest","min","close","easy","main","prospect","shops","subways","apartment","center","broadway","food","grand","lots","minute","street","bridge","convenient","downtown","express","host","neighborhood","nice","path","public","union","walk","access","direct","stops","terminal","williamsburg","columbia","island","mins","safe","soho","stores","supermarket","bars","catch","clean","district","essex","flushing","hosts","local","mta","multiple","museum","parking","plenty","recommend","stadium","straight","university","125th","barclays","beautiful","bedford","building","city","coffee","connect","decent","delancey","east","empire","franklin","fulton","gates","house","links","lirr","lorimer","major","makes","marcy","market","met","penn","pretty","quick","restaurant","ride","short","staten","store","super","supermarkets","time","transport","transportation","underground","utica","view","washington","wonderful","116th","7th","accessible","ace","additionally","amazing","astor","bed","bergen","boardwalk","botanical","brings","called","check","chinatown","coney","couple","danielle","delis","dollar","family","forest","friendly","ft","green","greene","heart","hipster","hospital","hudson","jfk","location","lot","loved","montrose","nearby","nostrand","nyc","peaceful","pier","pl","promenade","red","river","rockaway","rockefeller","shopping","site","space","spots","stay","taking","ten","theater","theatre","trail","water","waterfront","wholefoods","yankee","1,2,3","110th","14th","157th","15th","1h","1st","2,3","20min","24h","33rd","36th","4,5,6","45mins","4th","5th","9th","ac","accessibility","accommodating","aircraft","alex","allowed","amenities","approx","approximately","apt","arrived","arthur","ashe","astoria","atlantic","attractions","authority","av","b6","bad","barclay's","battery","bayside","beat","beneath","bikes","blooming","bodegas","boroughs","bound","boutiques","bowery","breakfast","brighton","briskly","brooklyn's","brought","built","busses","bustling","busy","buy","cafe","cafes","campuses","carnarsie","carrier","centre","checking","chelsea","church","cil","citi","clinton","coffe","coffeeshops","coin","comfortable","communicated","communication","commute","concourse","connections","conveniently","cool","corner","costco","cozy","crowded","cute","cyprus","david","decor","dekalb","deli","depending","diner","direction","directly","ditmar","donut","dorina","downstairs","drink","earl","easily","eating","eats","eddie","elma","entrance","equinox","essentially","euclid","excellent","excels","exchange","experience","fantastic","ferries","fifteen","financial","fine","flea","foods","fort","frequent","friend","fun","garden","giselle","gorgeous","grab","graham","grounds","grove","gun","halsey","harbor","head","heading","heather","heights","helpful","her's","herald","highline","highly","highway","hill","hills","home","hours","hub","huge","ideally","including","incredible","india","insanely","intrepid","isnt","jaime","jan","javits","jc","jeevan","jmz","joanna","joe","john's","junction","kai","kids","kings","lane","laundry","laurelton","leading","leads","leaves","lexington","lexingtown","lga","listing","literally","love","lovely","lower","m60","macys","mango","mark","marlow's","mart","master","meadows","memorial","metropolitan","michal","middle","mike's","mile","milstein","mini","monica's","montague","morgan","morning","mount","musuem","myrtle","nanonte","natural","neighbourhood","nook","nordstrom","north","noted","numerous","opera","parents","parks","parkway","perfect","perk","pharmacy","piers","pleased","port","private","proper","q30","queen","quiet","railway","reachable","refreshed","regularly","rentals","responded","restuarants","riverside","rosedale","samira","scene","scenic","section","selection","service","serviced","shop","shoreline","shower","shuttle","sights","sinai","sirr","sites","situated","skyline","slope","son's","spacious","sq","squares","stairs","starbuck","starbucks","staying","stays","steinway","stn","stuck","stuyvesant","subway.moe","superstore","surf","suzette","swann","system","tacos","target","taste","taxi","terrace","thé","theaters","theatres","ti.es","timo","tiwn","tons","tony","tourist","tournament","town","trade","trader","traders","trails","transit","travelling","tremont","trendy","true","und","uptown","van","views","walgreens","walls","west","whimsical","wifi","williamsberg","wilson's","world","worth","wyckoff","yana's","yankees","york","zerega"],"freq":[500,223,156,56,50,48,45,36,33,32,32,31,27,24,23,18,17,16,16,16,16,14,13,12,12,11,11,11,10,10,10,10,10,10,9,9,8,8,8,8,8,8,7,7,7,7,7,7,7,7,7,7,7,6,6,6,6,6,5,5,5,5,5,5,5,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"fontFamily":"Segoe UI","fontWeight":"bold","color":"random-dark","minSize":0,"weightFactor":0.36,"backgroundColor":"white","gridSize":0,"minRotation":-0.785398163397448,"maxRotation":0.785398163397448,"shuffle":true,"rotateRatio":0,"shape":"circle","ellipticity":0.65,"figBase64":null,"hover":null},"evals":[],"jsHooks":{"render":[{"code":"function(el,x){\n                        console.log(123);\n                        if(!iii){\n                          window.location.reload();\n                          iii = False;\n\n                        }\n  }","data":null}]}}</script>
 	</body>
 </html>
 
 
 
-Walking from/to **subway** are most mentioned in reviews, followed by **train**. 
+Walking from/to **subway (station)** are most mentioned in reviews, followed by **train station**. 
 
 ## <a id="sentiment">6. Sentiment Analysis</a>
 
@@ -1027,7 +1018,6 @@ contributions %>%
     
 ![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_72_1.png)
     
-
 
 When "blocks" is noun, it's no longer a negative word. So there is probably only one negative word "bad" in the top 40 words, and with small negative sentiment value.
 
@@ -1220,8 +1210,7 @@ reasons_filtered <- reasons %>%
 
 plot_negative_network(reasons_filtered)
 ```
-
-  
+   
 ![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_84_1.png)
     
 

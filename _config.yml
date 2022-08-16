@@ -1,4 +1,5 @@
 title: "Qin Liu"
+masthead_title: "Qin Liu"
 name: "Qin Liu"
 email: eeliuqin@gmail.com
 url: "http://eeliuqin.github.io"
@@ -18,6 +19,7 @@ plugins:
   - jekyll-feed
   - jekyll-include-cache
   - jekyll-paginate
+  - jekyll-seo-tag
 
 # Jekyll configuration
 permalink:   /:title/
