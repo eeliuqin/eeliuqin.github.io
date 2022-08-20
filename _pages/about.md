@@ -1,5 +1,5 @@
 ---
-title: " "
+title: "About"
 header:
   image: /assets/images/star-sky.png
   caption: "Photo Credit: [**Kristopher Roller**](https://unsplash.com/photos/zepnJQycr4U)"

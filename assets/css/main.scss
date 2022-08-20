@@ -18,6 +18,13 @@ a {
 }
 .archive__item-title {
   font-size: 1.15em;
+  a {
+    color: #333;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
 @media (min-width: 37.5em) {

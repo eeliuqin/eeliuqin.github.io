@@ -1,4 +1,5 @@
 ---
+title: "Portfolio"
 classes: wide
 permalink: /portfolio/index.html
 last_modified_at: 2022/08/13

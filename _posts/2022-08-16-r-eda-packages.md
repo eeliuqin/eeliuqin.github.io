@@ -6,7 +6,7 @@ excerpt: "Hmisc, GGally, DataExplorer, SmartEDA"
 
 ## Introduction
 
-Exploratory data analysis (EDA) is a critical step in any data science workflow. Inspired by the [article](https://towardsdatascience.com/four-r-packages-for-automated-exploratory-data-analysis-you-might-have-missed-c38b03d4ee16) on medium, I'd like to explore the 4 most popular R EDA packages according their downloads. The dataset is from my project [Chicago Bike-Share Analysis](/portfolio/google-da-capstone-project-bike-share/), to make it more efficient, I'm going to sample 10% of its original size.
+Exploratory data analysis (EDA) is a critical step in any data science workflow. Inspired by the [article](https://towardsdatascience.com/four-r-packages-for-automated-exploratory-data-analysis-you-might-have-missed-c38b03d4ee16) on medium, I'd like to explore the 4 most popular R EDA packages based on their downloads. The dataset is from my project [Chicago Bike-Share Analysis](/portfolio/google-da-capstone-project-bike-share/), to make it more efficient, I'm going to sample 10% of its original size.
 
 
 ## Import the data
