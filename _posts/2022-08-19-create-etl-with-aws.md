@@ -1,5 +1,5 @@
 ---
-title: "Build an ETL Pipeline with AWS [1/2]"
+title: "Build and Automate a Serverless ETL Pipeline with AWS Lambda [1/2]"
 category: posts
 excerpt: "Youtube Trending Videos, MySQL, AWS RDS"
 ---
@@ -181,6 +181,8 @@ def get_published_time(s):
     unit = parsed_s[0][1]
     if unit in unit_list:
         time_dict = dict((fmt,float(amount)) for amount,fmt in parsed_s)
+    elif unit+"s" in unit_list:
+        time_dict = dict((fmt+"s",float(amount)) for amount,fmt in parsed_s)
     elif unit in ["month", "months"]:
         time_dict = dict(("days",float(amount)*30) for amount,fmt in parsed_s)
     elif unit in ["year", "years"]:
@@ -204,6 +206,8 @@ def transform_data(data):
     # add column of current ranking
     data.index += 1
     data = data.rename_axis('rank').reset_index()
+    # add column of extracted at
+    data["extracted_at"] = datetime.now()
     # convert text to other formats
     data["length_minutes"] = data["lengthText"].apply(get_length_minutes)
     data["published_time"] = data["publishedTimeText"].apply(get_published_time)
@@ -213,7 +217,7 @@ def transform_data(data):
     
     return data
 
-df_videos = transform_data(df_videos)
+df_videos_clean = transform_data(df_videos)
 ```
 
 ## Loading
@@ -252,7 +256,7 @@ def load_data(data, table):
         print("Found Error")
     connection.close()
         
-load_data(df_videos, "youtube_trending_videos")
+load_data(df_videos_clean, "youtube_trending_videos")
 ```
 
     Success
