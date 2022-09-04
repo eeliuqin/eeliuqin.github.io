@@ -4,6 +4,8 @@ category: posts
 excerpt: "Youtube Trending Videos, MySQL, AWS RDS"
 ---
 
+[![view on github](https://img.shields.io/badge/GitHub-View_on_GitHub-blue?logo=GitHub)](https://github.com/eeliuqin/automate-etl-aws-lambda)
+
 ## Introduction
 
 The term **ETL pipeline** refers to the processes of extraction (from the cloud/APIs/databases/files), transforming (the raw data), and loading of data into a database such as a data warehouse.

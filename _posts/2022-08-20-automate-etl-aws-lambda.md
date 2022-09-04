@@ -4,6 +4,8 @@ category: posts
 excerpt: "Python, AWS Lambda, Amazon EventBridge"
 ---
 
+[![view on github](https://img.shields.io/badge/GitHub-View_on_GitHub-blue?logo=GitHub)](https://github.com/eeliuqin/automate-etl-aws-lambda)
+
 In [Part 1](/create-etl-with-aws), I created a Python script to collect data from Youtube trending videos and save it to AWS RDS MySQL instance. However, that script was running in my laptop, it's time to make it serverless!
 
 I'm going to automate the ETL Pipeline in [**AWS Lambda**](https://aws.amazon.com/lambda/) and schedule to run it daily. The code can be found in my [github](https://github.com/eeliuqin/automate-etl-aws-lambda).
