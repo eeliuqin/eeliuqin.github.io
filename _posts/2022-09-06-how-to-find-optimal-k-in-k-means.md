@@ -526,13 +526,11 @@ plot_silhouette_scores(X, range_n_clusters=[x for x in range(2, 10)], x_col_num=
 
 What we can learn from above silhouette analysis:
 
-- Any cluster with below average silhouette scores: when n_clusters >= 5, there are clusters with negative silhouette coefficient, we can exclude n_clusters >= 5.
+- Any cluster with below average silhouette scores: when n_clusters = 3, its cluster 2 is almost below the average silhouette score, so let's exclude n_clusters = 3.
 
-- wide fluctuations: when n_clusters=3, there is wide fluctuations. Its 2nd cluster is below average score while the others are much higher than average. Thus, we can exclude n_clusters = 3.
+- non-uniform thickness: when n_clusters >= 4, clusters in Silhouette plots that have non-uniform thickness, there are one or two clusters being very much thinner than others. Thus, we can exclude choice of n_clusters >= 4.
 
-- non-uniform thickness: when n_clusters >= 5, clusters in Silhouette plots that have non-uniform thickness, there are one or two clusters being very much thinner than others. Thus, we can exclude choice of n_clusters >= 5.
-
-In short, n_clusters=2 is the optimal value.
+In short, n_clusters=2 is the optimal value. Both its plots have similar thickness which means similar sample sizes in both clusters, which can be also verified from the labelled scatter plot on the right.
 
 #### SilhouetteVisualizer
 
