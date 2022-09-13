@@ -1,7 +1,7 @@
 ---
 title: "Scale and Standardize Data with Scikit-learn"
 category: posts
-excerpt: "MinMaxScaler, Normalizer, StandardScaler"
+excerpt: "Data Preprocessing, MinMaxScaler, Normalizer, StandardScaler"
 ---
 
 Many machine learning algorithms work better when the data is or approximately normally distributed, so it's common to transform the data to achieve a better model performance.  
@@ -194,7 +194,7 @@ In other words, it's **row-wise**.
 As for the norm, there are 3 options.
 
 ### l1-norm
-L1 Norm of a vector is also known as the Manhattan distance or Taxicab norm.
+[L1 norm](https://mathworld.wolfram.com/L1-Norm.html) of a vector is also known as the Manhattan distance or Taxicab norm.
 To calculate the norm, we need to take the sum of the absolute vector values and make sure it's 1.
 
 
@@ -568,7 +568,7 @@ X_scale
 
 
 
-**NOTE:** The drawback of `scale()` is it's just a function, and we have to use it carefully to avoid data leakage (Ref [Warning](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.scale.html#sklearn.preprocessing.scale) in the bottom). It's recommend using StandardScaler within a Pipeline in order to prevent most risks of data leaking.
+**NOTE:** The drawback of `scale()` is it's just a function, and we have to use it carefully to avoid data leakage (Ref [Warning](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.scale.html#sklearn.preprocessing.scale) in the bottom). It's recommended using StandardScaler within a Pipeline in order to prevent most risks of data leaking.
 
 ## Comparison
 

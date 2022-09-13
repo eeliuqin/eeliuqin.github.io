@@ -1,7 +1,7 @@
 ---
 title: "Online Course Notes: Udacity A/B Testing Final Project"
 category: posts
-excerpt: "click-through-probability, standard error, sanity checks"
+excerpt: "Click-Through-Probability, Sanity Checks"
 ---
 
 ## <a id="introduction">1. Introduction</a>
