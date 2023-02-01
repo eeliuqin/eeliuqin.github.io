@@ -5,7 +5,7 @@ last_modified_at: 2022/08/13
 
 
 feature_rows:
-- row_title: "Data Analysis with Python"
+- row_title: ""
   content:
   - image_path: /assets/images/portfolio/popular-ds-questions.png
     alt: "Data Science Questions"
@@ -19,7 +19,7 @@ feature_rows:
     excerpt: "What kind of strategy games are most welcomed?"
     url: "/portfolio/mobile-strategy-games"
 
-- row_title: "Data Analysis with R"
+- row_title: ""
   content:
   - image_path: /assets/images/portfolio/airbnb-negative-network.png
     alt: "Airbnb Reviews"
@@ -53,7 +53,7 @@ feature_rows:
     btn_class: "btn--primary"
 ---
 
-Here are some data analytics projects I've done. I will keep updating and adding some machine learning projects in the next few weeks. 
+Here are some data analytics projects I've done.
 
 
 {% include feature_rows %}
