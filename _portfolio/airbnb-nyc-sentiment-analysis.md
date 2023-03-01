@@ -8,6 +8,7 @@ date: 2022-08-05
 toc: true
 toc_label: "Contents"
 ---
+[![view on github](https://img.shields.io/badge/GitHub-View_on_GitHub-blue?logo=GitHub)](https://github.com/eeliuqin/data-analysis/blob/main/airbnb-nyc-sentiment-analysis.ipynb)
 
 ## <a id="introduction">1. Introduction</a>
 

@@ -10,13 +10,13 @@ feature_rows:
   - image_path: /assets/images/portfolio/osteoporosis.png
     alt: "Osteoporosis Prediction"
     title: "Predicting Osteoporosis Using NHANES Data"
-    excerpt: "Designing a method to predict whether someone has osteoporosis based on age, gender, race, BMI, smoking, alcohol consumption, sleep hours, arthritis and liver condition"
+    excerpt: "Benchmarking Logistic Regression, Support Vector Machine, Random Forest, and Neural Networks"
     url: "https://github.com/eeliuqin/Osteoporosis-Analysis-and-Prediction-on-NHANES-Data"
 
   - image_path: /assets/images/portfolio/hospital.png
     alt: "Inpatient Readmission Rates"
     title: "Analysis of California 30-Day Inpatient Readmission Rates"
-    excerpt: "Analyzing all-cause unplanned 30-day hospital readmission rates of California statewide and counties, for years 2011-2020"
+    excerpt: "Identifying associations between readmission rates and patient demographics, expected payer, and geographic location"
     url: "https://github.com/eeliuqin/california-readmission-rate-analysis"
 
 - row_title: "Case Study"
@@ -53,7 +53,5 @@ feature_rows:
     btn_class: "btn--primary" 
 
 ---
-
-Here are some data analysis or machine learning projects I've done.
 
 {% include feature_rows %}

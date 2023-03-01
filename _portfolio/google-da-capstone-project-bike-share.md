@@ -9,6 +9,8 @@ toc: true
 toc_label: "Contents"
 ---
 
+[![view on github](https://img.shields.io/badge/GitHub-View_on_GitHub-blue?logo=GitHub)](https://github.com/eeliuqin/data-analysis/blob/main/google-da-capstone-project-bike-share.ipynb)
+
 <a id="introduction"></a>
 ## <span style="color:#0071bc"> 1. Introduction </span> 
 
