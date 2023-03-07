@@ -3,25 +3,28 @@ title: "Text Mining and Sentiment Analysis for NYC Airbnb Reviews"
 header:
   image: /assets/images/nyc-skyline.png
   caption: "Photo credit: [**Vinta Supply Co.**](https://www.pexels.com/photo/new-york-city-842948/)"
-permalink: /portfolio/airbnb-nyc-sentiment-analysis-backup/
-date: 2022-08-05
+permalink: /portfolio/airbnb-reviews-sentiment-analysis/
+date: 2023-03-05
 toc: true
 toc_label: "Contents"
 ---
+[![view on github](https://img.shields.io/badge/GitHub-View_on_GitHub-blue?logo=GitHub)](https://github.com/eeliuqin/Airbnb-Reviews-Text-Mining-and-Sentiment-Analysis)
 
-## <a id="introduction">1. Introduction</a>
+## 1. Introduction
 
-New York City (NYC) is one of the most popular cities on [Airbnb](https://en.wikipedia.org/wiki/Airbnb). In this project, we will perform text mining and sentiment analysis on 2009-2022 NYC Airbnb reviews found [here](http://insideairbnb.com/get-the-data/). Here is the list of dataset columns:
+[Airbnb](https://en.wikipedia.org/wiki/Airbnb) is a global online marketplace for arranging or offering lodging and experiences, it has grown to become one of the largest online marketplaces for lodging in the world, while New York City (NYC) is one of the most popular cities on Airbnb (refer [statistia](https://www.statista.com/chart/18963/most-popular-us-cities-for-airbnb-homeaway/)), which means the competition is also brutal. Therefore, it's vital to understand what users like and dislike and make improvements to enhance the overall customer experience.
+
+In this project, we will perform text mining and sentiment analysis on 2018-2022 NYC Airbnb reviews found [here](http://insideairbnb.com/get-the-data/). Here is the list of dataset columns:
 
 - `listing_id`: The identifier of the listing (the room provided to the reviewer)
 - `id`: The identifier of the review
 - `date`: Time the review posted, in the format of `year-month-day`
 - `reviewer_id`: The identifier of the reviewer
-- `reviewer_id`: Reviewer's name
+- `reviewer_name`: Reviewer's name
 - `comments`: The text of the review
 
-## <a id="prepare">2. Prepare</a>
-### <a id="loading">2.1 Loading the libraries</a>
+## 2. Prepare
+### 2.1 Loading the libraries
 
 
 ```R
@@ -57,12 +60,11 @@ theme_set(
 )
 ```
 
-
-### <a id="importing">2.2 Importing the data</a>
+### 2.2 Importing the data
 
 
 ```R
-df <- read_csv("data/airbnb-reviews-nyc.csv")
+df <- read_csv("data/reviews.csv")
 head(df)
 ```
 
@@ -74,21 +76,19 @@ head(df)
 	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;date&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
 </thead>
 <tbody>
-	<tr><td>2595</td><td><span style=white-space:pre-wrap>  17857</span></td><td>2009-11-21</td><td><span style=white-space:pre-wrap>  50679</span></td><td><span style=white-space:pre-wrap>Jean   </span></td><td><span style=white-space:pre-wrap>Notre séjour de trois nuits.
+	<tr><td>5803</td><td> 1743</td><td>2009-04-23</td><td>  9868</td><td>Pamela </td><td>Artwork, indeed! The walls are covered with drawings by Maurice Sendak, Steven Kellogg, among others. It was quiet. Breakfast was ample. Batman and Robin were very affectionate. We plan to return again. Thanks, Laurie!                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       </td></tr>
+	<tr><td>2595</td><td>17857</td><td>2009-11-21</td><td> 50679</td><td><span style=white-space:pre-wrap>Jean   </span></td><td><span style=white-space:pre-wrap>Notre séjour de trois nuits.
 &lt;br/&gt;Nous avons apprécier L'appartement qui est très bien situé. Agréable, propre et bien soigné. C'est idéal pour une famille de 3 ou 4 personnes.
 &lt;br/&gt;Petits soucis en arrivant il y avait personne pour nous recevoir, et il manquait le savon pour la douche, le liquide vaisselle, nous les avons reçu de surlendemain. Il y a aussi le bruit du Métro de NY, donc une première nuit difficile si on est pas habitué. Jennifer est correcte le remboursement de la caution était très rapide.  A part ces petits détails notre court séjour c'est bien passé. 
 &lt;br/&gt;Si j'ai la possibilité de revenir sur NY pour les vacances, je reprendrai à "The Midtown Castle"
 &lt;br/&gt;Jean
 &lt;br/&gt;Possession - Ile de La Réunion
 &lt;br/&gt;</span></td></tr>
-	<tr><td>2595</td><td>  19176</td><td>2009-12-05</td><td>  53267</td><td>Cate   </td><td>Great experience.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </td></tr>
-	<tr><td>2595</td><td><span style=white-space:pre-wrap>  19760</span></td><td>2009-12-10</td><td><span style=white-space:pre-wrap>  38960</span></td><td><span style=white-space:pre-wrap>Anita  </span></td><td><span style=white-space:pre-wrap>I've stayed with my friend at the Midtown Castle for six days and it was a lovely place to be. A big spacious room with a pointy roof, which really makes you feel like staying in a castle. The location is perfect. It is just a few steps from Macy's Time Square and Theatre District. Everything worked just perfect with the keys etc. Thank you so much Jennifer, we had a great time in New York.
+	<tr><td>2595</td><td>19176</td><td>2009-12-05</td><td> 53267</td><td>Cate   </td><td>Great experience.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </td></tr>
+	<tr><td>2595</td><td>19760</td><td>2009-12-10</td><td> 38960</td><td><span style=white-space:pre-wrap>Anita  </span></td><td><span style=white-space:pre-wrap>I've stayed with my friend at the Midtown Castle for six days and it was a lovely place to be. A big spacious room with a pointy roof, which really makes you feel like staying in a castle. The location is perfect. It is just a few steps from Macy's Time Square and Theatre District. Everything worked just perfect with the keys etc. Thank you so much Jennifer, we had a great time in New York.
 &lt;br/&gt;Attention: it's on the 4th floor without a lift :-) but definetely worth it!                                                                                                                                                                                                                                                                     </span></td></tr>
-	<tr><td>2595</td><td>  34320</td><td>2010-04-09</td><td>  71130</td><td>Kai-Uwe</td><td>We've been staying here for about 9 nights, enjoying to be in the center of the city, that never sleeps...short ways to everywhere in Manhattan, by subway or by walk. Midtown castle is a beauftiful and tastful place, Jennifer and Tori relaxed and friendly hosts - thats why we - the three Berliners - recommand that place! Good to have WiFi and a little kitchen too!                                                                                                                                                                                                                                                                                                                                                                                   </td></tr>
-	<tr><td>2595</td><td>  46312</td><td>2010-05-25</td><td> 117113</td><td>Alicia </td><td>We had a wonderful stay at Jennifer's charming apartment! They were very organized and helpful; I would definitely recommend staying at the Midtown Castle!                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      </td></tr>
-	<tr><td>2595</td><td>1238204</td><td>2012-05-07</td><td>1783688</td><td>Sergey </td><td><span style=white-space:pre-wrap>Hi to everyone!
-&lt;br/&gt;Would say our greatest compliments to Jennifer, the host of Midtown Castle. We spent in this lovely apartment in the heart of Manhattan one month (April, 2012) and will remember this time as ours best.
-&lt;br/&gt;The apartment is pretty spacious and great located - the 5-th Ave right around the corner. There is everything you can need during your short or long stay. Jennifer is very friendly, vigorous and very responsible host. Thanks her and highly recomend this apartment for everyone who are looking for a quiet place right in the center of the boiling Midtown!                                                                                                                                                        </span></td></tr>
+	<tr><td>2595</td><td>34320</td><td>2010-04-09</td><td> 71130</td><td>Kai-Uwe</td><td>We've been staying here for about 9 nights, enjoying to be in the center of the city, that never sleeps...short ways to everywhere in Manhattan, by subway or by walk. Midtown castle is a beauftiful and tastful place, Jennifer and Tori relaxed and friendly hosts - thats why we - the three Berliners - recommand that place! Good to have WiFi and a little kitchen too!                                                                                                                                                                                                                                                                                                                                                                                   </td></tr>
+	<tr><td>2595</td><td>46312</td><td>2010-05-25</td><td>117113</td><td>Alicia </td><td>We had a wonderful stay at Jennifer's charming apartment! They were very organized and helpful; I would definitely recommend staying at the Midtown Castle!                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      </td></tr>
 </tbody>
 </table>
 
@@ -100,21 +100,19 @@ We can find something interesting in the random 10 rows, such as:
  
 We have to take those into account in our next analysis. Besides, `listing_id`, `id` and `reviewer_id` make more sense as strings.
 
-### <a id="exploring">2.3 Exploring the data</a>
-
-**Data size**
+#### Data size
 
 
 ```R
-# data size
+# data size of original dataset
 dim(df)
 ```
 
 ```R
-985674 · 6
+1088372 · 6
 ```
 
-**Summary statistics**
+#### Summary statistics
 
 
 ```R
@@ -124,66 +122,65 @@ summary(df)
 
        listing_id              id                 date           
      Min.   :2.595e+03   Min.   :1.743e+03   Min.   :2009-04-23  
-     1st Qu.:6.520e+06   1st Qu.:2.274e+08   1st Qu.:2018-01-14  
-     Median :1.858e+07   Median :5.128e+08   Median :2019-08-18  
-     Mean   :6.455e+15   Mean   :1.407e+17   Mean   :2019-06-16  
-     3rd Qu.:3.423e+07   3rd Qu.:4.093e+17   3rd Qu.:2021-07-18  
-     Max.   :6.392e+17   Max.   :6.413e+17   Max.   :2022-06-03  
+     1st Qu.:7.951e+06   1st Qu.:2.813e+08   1st Qu.:2018-06-24  
+     Median :2.165e+07   Median :6.042e+08   Median :2020-02-10  
+     Mean   :3.808e+16   Mean   :2.434e+17   Mean   :2020-01-08  
+     3rd Qu.:4.121e+07   3rd Qu.:5.832e+17   3rd Qu.:2022-03-15  
+     Max.   :7.733e+17   Max.   :7.747e+17   Max.   :2022-12-04  
       reviewer_id        reviewer_name        comments        
-     Min.   :        1   Length:985674      Length:985674     
-     1st Qu.: 25691809   Class :character   Class :character  
-     Median : 82200666   Mode  :character   Mode  :character  
-     Mean   :124383624                                        
-     3rd Qu.:192385779                                        
-     Max.   :462077448                                        
+     Min.   :        1   Length:1088372     Length:1088372    
+     1st Qu.: 27751798   Class :character   Class :character  
+     Median : 90587758   Mode  :character   Mode  :character  
+     Mean   :136195313                                        
+     3rd Qu.:212078766                                        
+     Max.   :489891673                                        
 
 
-The dataset contains 980 K+ reviews of NYC airbnbs between 2009-04-23 and 2022-06-03. To avoid skewed monthly analysis, we should remove the 3 days data in Jun, 2022.
-Besides, to make the analysis more effient, let's sample it to 10% of its original size.
+The dataset contains more than 1 million reviews of NYC airbnbs between 2009-04-23 and 2022-12-04. The statistics indicates the number of reviews in the early years is far less than in recent years, because 2009-2018 (9 years) has about 25% of total reviews only. Therefore, we have a sufficient amount of data to get a clearer picture of recent trends, by analyzing the last 5 years (2018-2022) of reviews, .
 
-**Sampling**
+To avoid skewed monthly analysis, we should remove the 4 days data in December, 2022.
+
+<!-- #### Sampling -->
+
+## 3. Process
+
+### 3.1 Data filtering
+
+This study will focus on 2018-2022 reviews.
 
 
 ```R
-# get 10% of original dataset
-set.seed(1)
-df_sample <- df %>% 
-  sample_n(round(nrow(df)/10,0), replace = FALSE, prob = NULL)
-
-dim(df_sample)
-```
-
-```R
-98567 · 6
+df_filtered <- df %>% 
+  filter(ymd("2018-01-01") <= date & date < ymd("2022-12-01")) # remove 2022-12-01 to 2022-12-04 data
 ```
 
 
-**Missing values**
+### 3.2 Data cleaning && manipulation
+
+Check missing values:
 
 
 ```R
 # the number of missing values
-print(colSums(is.na(df_sample)))
+print(colSums(is.na(df_filtered)))
 ```
 
        listing_id            id          date   reviewer_id reviewer_name 
                 0             0             0             0             0 
          comments 
-                4 
+               39 
 
 
-Give the small size of missing values, it's OK to remove them later.
-
-## <a id="process">3. Process</a>
-### <a id="cleaning">3.1 Data cleaning && manipulation</a>
+Give the small size of missing values, it's OK to remove them.
 
 
 ```R
 # ignore missing values
-df_clean <- df_sample[complete.cases(df_sample), ]
+df_clean <- df_filtered[complete.cases(df_filtered), ]
+# remove html tags
+df_clean$comments <- gsub("<.*/>", " ", df_clean$comments)
 
-df_clean <- df_clean %>% 
-  filter(date < ymd("2022-06-01")) %>% # remove incomplete data in Jun 2022
+df_clean <- df_clean %>%
   distinct(comments, .keep_all = TRUE) %>% # remove duplicates
   filter(nchar(comments) > 1) %>% # remove reviews shorter than 1 character
   select(-c("reviewer_id", "reviewer_name")) %>%  # drop reviewer related columns
@@ -191,328 +188,102 @@ df_clean <- df_clean %>%
          id = as.character(id)
   ) %>% # convert id to character
   rename(reviews = comments) # rename column
-
 ```
 
-## <a id="analyzing">4. Analyzing the data</a>
+### 3.3 English reviews
 
-### <a id="language">4.1 Language identification</a>
+This study will only focus on English reviews. We've known that some of the comments are not in English, but in which languages and in what proportion?
 
-We've known the reviews are written in different languages, but we don't know which languages they are and what proprotion of them are in English.
-
-There is no perfect method for language identification. Here we select 2 popular R libraries to idenfiy the languages of reviews:
-- [textcat](https://www.rdocumentation.org/packages/textcat/versions/1.0-7/topics/textcat): N-Gram Based Text Categorization
-- [cld2](https://www.rdocumentation.org/packages/cld2/versions/1.2.1/topics/cld2): R Wrapper for Google’s Compact Language Detector 2
-
-They both have pros and cons, we need to compare their results and manually fix some errors to increase the accuracy.
-
-
-```R
-# detect the review text's language by textcat
-lan_group <- textcat(df_clean$reviews)
-lan_df <- data.frame(language_tc = lan_group)
-df_reviews <- cbind(df_clean, lan_df)
-```
+Here we use [cld2](https://www.rdocumentation.org/packages/cld2/versions/1.2.1/topics/cld2) (R Wrapper for Google’s Compact Language Detector 2) library to idenfiy the languages of reviews.
 
 
 ```R
 # detect the review text's language by cld2
 lan_group_cld2 <- detect_language(df_clean$reviews)
-lan_df_cld2 <- data.frame(language_cld2 = lan_group_cld2)
-df_reviews <- cbind(df_reviews, lan_df_cld2)
+lan_df_cld2 <- data.frame(language = lan_group_cld2)
+df_reviews <- cbind(df_clean, lan_df_cld2)
 ```
 
 
 ```R
 # check the first 6 rows
-df_reviews %>% select(reviews, language_tc, language_cld2) %>% head()
+df_reviews %>% select(reviews, language) %>% head()
 ```
 
 
 <table class="dataframe">
-<caption>A data.frame: 6 × 3</caption>
+<caption>A data.frame: 6 × 2</caption>
 <thead>
-	<tr><th></th><th scope=col>reviews</th><th scope=col>language_tc</th><th scope=col>language_cld2</th></tr>
-	<tr><th></th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
+	<tr><th></th><th scope=col>reviews</th><th scope=col>language</th></tr>
+	<tr><th></th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
 </thead>
 <tbody>
-	<tr><th scope=row>1</th><td>As art lovers, we had high hopes for Norman's place; however, these hopes were very much let down. The hosts, Norman and Louie, are friendly enough, and Louie even tried hard to make sure that he was back for our odd check-in time. And to give credit where credit due, the details mentioned in the description are accurate - the location is walking distance from Penn Station, the apartment is filled with art, and the bathroom is huge and very clean. However, two major issues warranted this poor review. Firstly, the room was almost unbearably hot, and we stayed in winter when the temperatures were nearly freezing outside. We ended up covering the radiator with towels and blankets because it was just too darn hot. We were going to open the window to let in some air - and this leads to the second issue. The window was practically nonexistent. It was literally detached from the railing, and was attached to the windowsill with masking tape and cellophane. It was therefore impossible to raise it to let in air. There wasn't even a screen door, meaning that if we removed the tape, there would be a literal hole in our apartment. Although the haphazard window setup failed to let in cold air, it succeeded in exposing the room to all the sounds of the city, to the extent that it was nearly impossible to sleep at all at night. Norman and Louie are nice people, but it was simply impossible for us to enjoy our stay at their place in any way. I advise them to fix their window before accepting any more guests.</td><td>english</td><td>en</td></tr>
-	<tr><th scope=row>2</th><td>Great spot.  Convenient to the subway into Manhattan and up into the Bronx.  We spent an entire day exploring the Bronx.  Amil had great suggestions and was extremely helpful in giving us advice on where to go and how to get around.  The room was great.  Clean, quiet and comfortable.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </td><td>english</td><td>en</td></tr>
-	<tr><th scope=row>3</th><td>My family and I spent 10 unique days in Leo and Claudia's apartment. The mansion is Gorgeous, exactly as it is shown in the pictures. A beautiful home with all you need and more, well decorated and really comfortable. The neighborhood is awesome, so nice, it reflects the true New Yorkers life! We totally recommend Mayor's mansion and if anytime we travel back to Brooklyn, we will, for sure, stay at this place again!                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         </td><td>english</td><td>en</td></tr>
-	<tr><th scope=row>4</th><td>Nous recommandons cette adresse. Accueil très sympathique, des informations précises autour du logement comme des restaurants, des bars, une laverie, le métro etc....le loueur habite au dessus du logement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </td><td>french </td><td>fr</td></tr>
-	<tr><th scope=row>5</th><td>Great location, and rate, but the rooms are not in a good condition!                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </td><td>english</td><td>en</td></tr>
-	<tr><th scope=row>6</th><td>Good location if you need to stay close to JFK. pretty quiet and clean. Nothing more you can ask for a short stay.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          </td><td>english</td><td>en</td></tr>
+	<tr><th scope=row>1</th><td>Great place. Would definitely recommend! Jennifer is really sweet and easy going.                                                                                                                                                                                                                                                                                                                                                                                                               </td><td>en</td></tr>
+	<tr><th scope=row>2</th><td>We really enjoyed our stay at Jennifer’s apartment. She was very hospitable and answered any questions we had promptly. The hike up the four flights of stairs with the luggage was a challenge.  The location was amazing. Central to everything, 5 min walk to the subway, close to time square. There was a bit of noise at night from all the construction happening around the apartment but Jennifer supplied us with ear plugs which worked a treat. Would highly recommend her apartment</td><td>en</td></tr>
+	<tr><th scope=row>3</th><td>This apartment is convenient and functional.  The huge skylight makes it feel open and airy. And it is located smack dab in the middle of Manhattan.  Highly recommended.                                                                                                                                                                                                                                                                                                                       </td><td>en</td></tr>
+	<tr><th scope=row>4</th><td>The Midtown Castle is a beautiful place to stay in the center of the city.  Truly a sanctuary with everything you need. Little touches of nature and beauty throughout. Waking up with the sun from the skylight was amazing.                                                                                                                                                                                                                                                                   </td><td>en</td></tr>
+	<tr><th scope=row>5</th><td>Jennifer is very nice and responsive. The location of the apt is great. However  However. We do appreciate the stay and the location                                                                                                                                                                                                                                                                                                                                                            </td><td>en</td></tr>
+	<tr><th scope=row>6</th><td>Jennifer es un anfitrión increíble. Siempre estuvo comunicada y dejó listos todos los detalles para que mi estancia fuera perfecta. Me sentí como en casa. El departamento es maravilloso, con mucha luz y una sensación de tranquilidad, además de una ubicación inmejorable, justo en el centro de Manhattan!! A unos pasos del Empire State. Totalmente recomendable!!                                                                                                                       </td><td>es</td></tr>
 </tbody>
 </table>
 
 
 
-The first 6 records are all match, but there must be some mismatches considering the sample size. It's unrealistic to get 100% accuracy, let's focus on the main languages.
-
-**Main languages**
+List the main languages:
 
 
 ```R
 # textcat: list languages with share greater than 1%
 df_reviews %>% 
-  count(language_tc) %>% 
+  count(language) %>% 
   mutate(percentage = round(n/sum(n)*100, 1)) %>% 
-  filter(percentage > 1) %>% 
+  filter(percentage > 0) %>% 
   arrange(desc(n))
 ```
 
 
 <table class="dataframe">
-<caption>A data.frame: 4 × 3</caption>
+<caption>A data.frame: 12 × 3</caption>
 <thead>
-	<tr><th scope=col>language_tc</th><th scope=col>n</th><th scope=col>percentage</th></tr>
+	<tr><th scope=col>language</th><th scope=col>n</th><th scope=col>percentage</th></tr>
 	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
 </thead>
 <tbody>
-	<tr><td>english</td><td>81005</td><td>84.9</td></tr>
-	<tr><td>scots  </td><td> 3663</td><td> 3.8</td></tr>
-	<tr><td>spanish</td><td> 2940</td><td> 3.1</td></tr>
-	<tr><td>french </td><td> 2638</td><td> 2.8</td></tr>
+	<tr><td>en</td><td>743138</td><td>90.5</td></tr>
+	<tr><td>es</td><td> 27257</td><td> 3.3</td></tr>
+	<tr><td>fr</td><td> 20233</td><td> 2.5</td></tr>
+	<tr><td>NA</td><td>  8041</td><td> 1.0</td></tr>
+	<tr><td>de</td><td>  6749</td><td> 0.8</td></tr>
+	<tr><td>pt</td><td>  3158</td><td> 0.4</td></tr>
+	<tr><td>it</td><td>  2951</td><td> 0.4</td></tr>
+	<tr><td>zh</td><td>  2077</td><td> 0.3</td></tr>
+	<tr><td>ko</td><td>  1647</td><td> 0.2</td></tr>
+	<tr><td>nl</td><td>  1276</td><td> 0.2</td></tr>
+	<tr><td>ru</td><td>  1056</td><td> 0.1</td></tr>
+	<tr><td>ja</td><td>   928</td><td> 0.1</td></tr>
 </tbody>
 </table>
 
 
 
-
-```R
-# cld2: list languages with share greater than 1%
-df_reviews %>% 
-  count(language_cld2) %>% 
-  mutate(percentage = round(n/sum(n)*100, 1)) %>% 
-  filter(percentage > 1) %>% 
-  arrange(desc(n))
-```
-
-
-<table class="dataframe">
-<caption>A data.frame: 4 × 3</caption>
-<thead>
-	<tr><th scope=col>language_cld2</th><th scope=col>n</th><th scope=col>percentage</th></tr>
-	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><td>en</td><td>85933</td><td>90.1</td></tr>
-	<tr><td>es</td><td> 2919</td><td> 3.1</td></tr>
-	<tr><td>fr</td><td> 2467</td><td> 2.6</td></tr>
-	<tr><td>NA</td><td> 1169</td><td> 1.2</td></tr>
-</tbody>
-</table>
-
-
-
-Both libraries identified main languages **English** (en), **Spanish** (es), and **French** (fr), with a combined share around 91%-96%, ignoring the "NA" returned by cld2.
-
-Both results indicate English is the most common language in reviews, but textcat identified 5% less English. Why? Moreover, in the result of textcat, the 2nd most common language is surprisingly [scots](#https://en.wikipedia.org/wiki/Scots_language), which is not even in cld2's result.
-
-Let's double the reviews that are marked as English by cld2 only.
-
-**English**
-
-
-```R
-set.seed(1)
-
-# listing the result of textcat when cld2 is English
-df_reviews %>% select(reviews, language_tc, language_cld2) %>% 
-  filter(language_cld2 == "en" & language_tc != "english") %>% 
-  sample_n(20)
-```
-
-
-<table class="dataframe">
-<caption>A data.frame: 20 × 3</caption>
-<thead>
-	<tr><th scope=col>reviews</th><th scope=col>language_tc</th><th scope=col>language_cld2</th></tr>
-	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><td>Place is nice and clean but would bring my own towels and wash cloth. Also not an exact lock on the door more of hook and loop.                                                                                                                                                                                                                                                  </td><td>scots         </td><td>en</td></tr>
-	<tr><td>Love it, as you guys can see, this is not my first time staying at her beautiful home.                                                                                                                                                                                                                                                                                           </td><td>scots         </td><td>en</td></tr>
-	<tr><td>It's a great place to stay if you're looking for a quiet place to sleep!                                                                                                                                                                                                                                                                                                         </td><td>scots         </td><td>en</td></tr>
-	<tr><td>Easy check in, clean, and cozy. Farida was excellent with communication and the home was clean and cozy and had everything we needed. Thank you for making it super easy for us! I definitely recommend this listing for those needing a quick place to stay, that's affordable yet cozy like home.                                                                              </td><td>scots         </td><td>en</td></tr>
-	<tr><td>Great contactless servic                                                                                                                                                                                                                                                                                                                                                         </td><td>catalan       </td><td>en</td></tr>
-	<tr><td>ALWAYS A PLEASURE.                                                                                                                                                                                                                                                                                                                                                               </td><td>german        </td><td>en</td></tr>
-	<tr><td>Everything was terrific                                                                                                                                                                                                                                                                                                                                                          </td><td>scots         </td><td>en</td></tr>
-	<tr><td>Jessica's amazing. recommended.                                                                                                                                                                                                                                                                                                                                                  </td><td>catalan       </td><td>en</td></tr>
-	<tr><td>I feel at one with The Bronx. It was a good week. It's a nice house. Great bathroom. Close to affordable food. Get ready to learn Spanish. Rossy's family is great. Your stuff is safe. You're safe, but watch out for the guy at the chicken shack down Hennessy Street.                                                                                                        </td><td>scots         </td><td>en</td></tr>
-	<tr><td>Place was way better than I expected                                                                                                                                                                                                                                                                                                                                             </td><td>scots         </td><td>en</td></tr>
-	<tr><td>Sarah's place is set up perfect for a long weekend get away. It's in a nice neighborhood and had easy access the Flatiron district as well the transit system to get anywhere in the city. The apartment was clean and has a well stocked kitchen for those who want to cook. We felt at home right away. Sarah was helpful and responsive as well. We will definitely come back.</td><td>scots         </td><td>en</td></tr>
-	<tr><td>Super clean and comfortable. A bit rabid about the AC usage but other than that it was a perfect stay.                                                                                                                                                                                                                                                                           </td><td>scots         </td><td>en</td></tr>
-	<tr><td>Excellent apartment. Location was very Convenient too.                                                                                                                                                                                                                                                                                                                           </td><td>french        </td><td>en</td></tr>
-	<tr><td>Excellent value for money                                                                                                                                                                                                                                                                                                                                                        </td><td>catalan       </td><td>en</td></tr>
-	<tr><td>Has everything you need. Would definitely stay again.                                                                                                                                                                                                                                                                                                                            </td><td>middle_frisian</td><td>en</td></tr>
-	<tr><td><span style=white-space:pre-wrap>Chris was just the host I was looking for:&lt;br/&gt;Friendly &lt;br/&gt;Helpful &lt;br/&gt;Not over bearing &lt;br/&gt;&lt;br/&gt;Everything you need if you are looking for a place just to sleep in after a day of adventure &lt;br/&gt;&lt;br/&gt;Room isn’t anything fancy but you don’t need it to be &lt;br/&gt;Affordable and clean &lt;br/&gt;&lt;br/&gt;Short walk from metro and bars                                             </span></td><td><span style=white-space:pre-wrap>scots         </span></td><td>en</td></tr>
-	<tr><td>quiet and wonderful                                                                                                                                                                                                                                                                                                                                                              </td><td>dutch         </td><td>en</td></tr>
-	<tr><td>A must, Excellent stay!                                                                                                                                                                                                                                                                                                                                                          </td><td>catalan       </td><td>en</td></tr>
-	<tr><td><span style=white-space:pre-wrap>Great little space. Has everything you need.&lt;br/&gt;A little far from the city but the host lets you know how to get there. &lt;br/&gt;Very quiet neighborhood.&lt;br/&gt;Would recommend!!                                                                                                                                                                                                     </span></td><td><span style=white-space:pre-wrap>scots         </span></td><td>en</td></tr>
-	<tr><td>clean，not bad                                                                                                                                                                                                                                                                                                                                                                   </td><td>scots_gaelic  </td><td>en</td></tr>
-</tbody>
-</table>
-
-
-
-We can check more reviews by setting a different seed and re-run above code, but the result is the same, that is, those reviews are actually English. So cld2 has higher accuracy in English identification. 
-
-Next, let's select `language_cld2` as the result of language identification and fix mismatches of other languages.
-
-**Spanish**
-
-Both textcat and cld2 mark 3.1% of reviews as Spanish, it should be fine to select either result, but let's double check how many mismatches there are.
-
-
-```R
-# the mismatches of Spanish
-es_mis_reviews <- df_reviews %>%
-  filter((language_tc != "spanish" & language_cld2 == "es") |
-        (language_tc == "spanish" & language_cld2 != "es"))
-
-es_mis_reviews %>% nrow()
-```
-
-
-164
-
-
-
-```R
-# randomly display 15 of them
-set.seed(1)
-es_mis_reviews %>% 
-  select(reviews, language_tc, language_cld2) %>% 
-  sample_n(15)
-```
-
-
-<table class="dataframe">
-<caption>A data.frame: 15 × 3</caption>
-<thead>
-	<tr><th scope=col>reviews</th><th scope=col>language_tc</th><th scope=col>language_cld2</th></tr>
-	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><td><span style=white-space:pre-wrap>Eli ha sido una excelente anfitriona. Antes del viaje respondió a todas mis dudas y durante nuestra estancia también estuvo siempre disponible.&lt;br/&gt;&lt;br/&gt;La casa se ajusta a la descripción y la encontramos muy limpia y cómoda.&lt;br/&gt;&lt;br/&gt;Muchas gracias Eli!&lt;br/&gt;&lt;br/&gt;Eli's been an excellent host. Before the trip she replied all my queries very quick and during our time there, she was also completely available.&lt;br/&gt;&lt;br/&gt;The house matches with the description and we found it clean and comfortable.&lt;br/&gt;&lt;br/&gt;Thank you very much Eli!                                                                                                                                                                                                                                                                                                                     </span></td><td>english</td><td>es</td></tr>
-	<tr><td>Yocasta是一个非常热情的主人，她能够为我们的所有问题都给予最好的回复，为我们的纽约之行提供了较多的帮助，非常感谢她！下次再来纽约，我还会选择这里的。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </td><td>spanish</td><td>zh</td></tr>
-	<tr><td>Kristen was an amazing host. I have problems to make check in on time and she was very helpful. I highly recommend stay in her house. We really enjoy the house and  her cat Franklin. Un lugar acogedor y tranquilo con gente muy atenta y amable muy recomendado.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </td><td>english</td><td>es</td></tr>
-	<tr><td><span style=white-space:pre-wrap>Casa y zona acogedora y tranquila.
-&lt;br/&gt;ubicación a 20 minutos en bus de mahattan (3$ viaje no metrocar).
-&lt;br/&gt;a 3 minutos vistas espectaculares de manhattan al completo.
-&lt;br/&gt;En septiembre temperatura perfecta.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 </span></td><td>catalan</td><td>es</td></tr>
-	<tr><td>Eng.&lt;br/&gt;Great place to rest after an exhated day walked in New York.&lt;br/&gt;The best without any doubt...place. Cool and Cozy flat!! Very well communicated if you use the subway and the area...East village has a unique touch and very peaceful. I would like to improve the soundproofing of the window, since through the air conditioning it facilitated noise from the street.&lt;br/&gt;Emma was a great host and she provide us all that we needed.&lt;br/&gt;&lt;br/&gt;Spanish&lt;br/&gt;Buen lugar para descansar después de un día pateando NYC. Esta muy bien cuidado el apartamento, limpio y bien ubicado para coger el metro rápidamente. Lo que se podría mejorar es que la insonorización no es muy buena, escuchas mucho ruido desde la calle a través del aire acondicionado.&lt;br/&gt;No conocimos a Emma en persona, pero nos facilito mucha información de la zona y del país.</td><td>english</td><td>es</td></tr>
-	<tr><td><span style=white-space:pre-wrap>estuve hospedado por 10 dias todo limpio Femi es una excelente persona gran anfitrion nunca nos hizo falta nada todo lo teniamos en el apartamento y muchas gracias Femi por todo definitivamente un muy recomendado el apartamento.&lt;br/&gt;I was staying for 10 days all clean Femi is an excellent person great host we never needed anything we had everything in the apartment and many thanks Femi for everything definitely a highly recommended apartment                                                                                                                                                                                                                                                                                                                                                                                                          </span></td><td>english</td><td>es</td></tr>
-	<tr><td>Close to subways                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       </td><td>spanish</td><td>en</td></tr>
-	<tr><td>Recomendable, muy limpio.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              </td><td>italian</td><td>es</td></tr>
-	<tr><td>Raquel siempre fue muy amable y atenta con nosotros.  El lugar es muy lindo y cerca de muchos transportes publicos para ir a Manhattan. De volver a Nueva York no dudaria en regresar a su apartamento. Gracias por todo!                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              </td><td>catalan</td><td>es</td></tr>
-	<tr><td><span style=white-space:pre-wrap>Estuvimos 8 noches en casa de Alex ( era nuestra primera experiencia AIR BNB) y fue todo perfecto. La casa estaba muy limpia, la cama comodisima y en apenas 20 minutos ibamos desde la puerta de casa a Times Square (1 parada de metro hasta Manhattan, 3 hasta Times Sq). Alex nos ayudo en todo lo que necesitamos, se mostro disponible a cualquier hora y procuro siempre que no sientieramos como en casa. Completamente recomendable
-&lt;br/&gt;Alex was the perfect Host. 
-&lt;br/&gt;It was our first AIRBNB and we just can thank him for everthing. House absolutely clean and very near from manhattan. 
-&lt;br/&gt;Thoroughly recommended                                                                                                                                                                                                                               </span></td><td>catalan</td><td>es</td></tr>
-	<tr><td>Excelente lugar!                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       </td><td>spanish</td><td>pt</td></tr>
-	<tr><td>Veronica is great! 10/10 recomend. Clean friendly environment.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         </td><td>spanish</td><td>en</td></tr>
-	<tr><td>Barrio seguro y tranquilo.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             </td><td>spanish</td><td>gl</td></tr>
-	<tr><td>una buena hospitalidad, muy buen anfitrión, thank you very much Casper for opening the doors of your house, I highly recommend the lodging, he is a very kind, educated and attentive person, nothing bad to say, I only stayed one night, when I return to NY happy I return to your home. It has very good location, very central, much commerce, parks, restorant etc etc etc, very satisfied                                                                                                                                                                                                                                                                                                                                                                                                                                                                       </td><td>english</td><td>es</td></tr>
-	<tr><td>Muy atenta ella y espectacular el depto.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               </td><td>catalan</td><td>es</td></tr>
-</tbody>
-</table>
-
-
-
-Both textcat and cld2 incorrectly identified Spanish, it's hard to say which one is more accurate. Given the size of mismatches is only 0.16% of the reviews, it's should be fine to use either result, here we select cld2. 
-
-**French**
-
-cld2 identified less French reviews than textcat, let's take a closer look.
-
-
-```R
-# reviews which marked as "french" by textcat only
-fr_mis_reviews <- df_reviews %>%
-  filter(language_tc == "french" & language_cld2 != "fr")
-
-fr_mis_reviews %>% 
-  select(language_cld2) %>% 
-  count(language_cld2) %>% 
-  mutate(percentage = round(n/sum(n)*100, 1)) %>% 
-  filter(percentage > 1) %>% 
-  arrange(desc(n))
-```
-
-
-<table class="dataframe">
-<caption>A data.frame: 1 × 3</caption>
-<thead>
-	<tr><th scope=col>language_cld2</th><th scope=col>n</th><th scope=col>percentage</th></tr>
-	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><td>en</td><td>196</td><td>97.5</td></tr>
-</tbody>
-</table>
-
-
-
-Among these mismatches, 97.5% of them are English, let's check how those reviews look like.
-
-
-```R
-# randomly display 15 of them
-set.seed(1)
-fr_mis_reviews %>% 
-  select(reviews, language_tc, language_cld2) %>% 
-  sample_n(15)
-```
-
-
-<table class="dataframe">
-<caption>A data.frame: 15 × 3</caption>
-<thead>
-	<tr><th scope=col>reviews</th><th scope=col>language_tc</th><th scope=col>language_cld2</th></tr>
-	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><td>Large space. Quiet.                                                                                                                                                                                                                                                                                       </td><td>french</td><td>en</td></tr>
-	<tr><td><span style=white-space:pre-wrap>Great location &amp; communication.                                                                                                                                                                                                                                                                           </span></td><td>french</td><td>en</td></tr>
-	<tr><td>5 star location!                                                                                                                                                                                                                                                                                          </td><td>french</td><td>en</td></tr>
-	<tr><td>Good communication                                                                                                                                                                                                                                                                                        </td><td>french</td><td>en</td></tr>
-	<tr><td>Client satisfaction                                                                                                                                                                                                                                                                                       </td><td>french</td><td>en</td></tr>
-	<tr><td>excelent place !                                                                                                                                                                                                                                                                                          </td><td>french</td><td>en</td></tr>
-	<tr><td>Awesome location.                                                                                                                                                                                                                                                                                         </td><td>french</td><td>en</td></tr>
-	<tr><td>good host. excellent location                                                                                                                                                                                                                                                                             </td><td>french</td><td>en</td></tr>
-	<tr><td>Great, quiet location!  One block from Riverfront Park. Few blocks from subway.                                                                                                                                                                                                                           </td><td>french</td><td>en</td></tr>
-	<tr><td>Perfect location 👌                                                                                                                                                                                                                                                                                       </td><td>french</td><td>en</td></tr>
-	<tr><td>房东人是位很有格调的优雅的女士，非常好客。每天都有现煮的咖啡提供，冰箱里也有小食提供。房东女士的小狗CousCous是只非常可爱粘人的小姑娘。房间里有很多很棒的画，尤其喜欢我住的卧室里的那几副印象派画作。房间地理位置非常好，紧挨着中央公园，出门右转就能去跑步，也非常安全的区域。以后有机会来还要再住在这里。</td><td>french</td><td>zh</td></tr>
-	<tr><td>Location is good.                                                                                                                                                                                                                                                                                         </td><td>french</td><td>en</td></tr>
-	<tr><td>It is a convenient location.                                                                                                                                                                                                                                                                              </td><td>french</td><td>en</td></tr>
-	<tr><td>Good location.                                                                                                                                                                                                                                                                                            </td><td>french</td><td>en</td></tr>
-	<tr><td>Adorable place 🥰                                                                                                                                                                                                                                                                                         </td><td>french</td><td>en</td></tr>
-</tbody>
-</table>
-
-
-
-The result of cld2 are correct, while textcat mistakenly marked most of them as French.
-
-In summary, we are safe to use the result of cld2, let's make the data more readable.
+**English** is the main language of those reviews (90.5%) and also this study's target language. Let's drop reviews of other languages.
 
 
 ```R
 df_reviews <- df_reviews %>% 
-  select(-language_tc) %>% 
-  rename(language = language_cld2)
-
-df_reviews["language"][df_reviews["language"] == "en"] <- "english"
-df_reviews["language"][df_reviews["language"] == "es"] <- "spanish"
-df_reviews["language"][df_reviews["language"] == "fr"] <- "french"
+  filter(language == 'en') 
+dim(df_reviews)
 ```
 
-Our analysis will focus primarily on English reviews, while including sentiment analysis on reviews in Spanish and French.
-While the accuracy should have improved considerably, it's still not 100%, and to get more reliable results, we need to use stop words of these 3 languages.
+```R
+743138 · 5
+```
 
-### <a id="review_trend">4.2 Trend in number of reviews</a>
+The final data has 743,138 rows x 5 columns.
+
+## Exploratory Data Analysis
+
+###  4.2 Number of reviews over time
 
 Let's have a basic understanding of the data, such as the trend in the number of reviews. Below is a bar plot that can display monthly reviews.
 
@@ -527,138 +298,106 @@ avg_review_cnt <- round(mean(df_date_group$n), 0)
 df_date_group %>%
   ggplot(aes(Month, n)) +
   geom_line(size = 0.8) +
-  geom_smooth(se = F, lty = 2) + 
-  geom_hline(yintercept = avg_review_cnt, color="red") +
-  geom_text(aes(ymd("2012-04-01"), avg_review_cnt), 
-            label = paste("Average Monthly Reviews Count: ", avg_review_cnt),
-            color="red", vjust = -1, size = 6) +
-  scale_x_date(date_breaks="6 month", date_labels="%Y-%m") +
+  geom_smooth(se = F, lty = 2, color="red") + 
+  geom_hline(yintercept = avg_review_cnt, color="blue") +
+  geom_text(aes(ymd("2020-07-01"), avg_review_cnt), 
+            label = paste("Average Monthly Reviews Count:\n", avg_review_cnt),
+            color="blue", vjust = -1, size = 6) +
+  scale_x_date(date_breaks="3 month", 
+               date_labels="%Y-%m", 
+               limits = as.Date(c('2018-01-01','2022-12-01')),
+               expand=c(0,0)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  labs(title = "Monthly Reviews Count of NYC Airbnbs (sample size: 10%)")
+  labs(title = "Monthly Reviews Count of NYC Airbnbs")
 ```
 
     `geom_smooth()` using method = 'loess' and formula 'y ~ x'
     
 
+   
+![png](/figs/airbnb-reviews-sentiment-analysis_files/airbnb-reviews-sentiment-analysis_27_1.png)  
 
 
-    
-![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_42_1.png)
-    
+Overall, the number of reviews increases year over year but fluctuates seasonally, It decreased during winter (October-February) then increases the next season.
 
+During 2020/03 - 2021/06, the number of reviews dropped rapidly due to COVID 19 and has since increased rapidly.
 
-Overall, the number of reviews is affected by season and increases every year. During 2020/03 - 2021/05, the number of reviews dropped rapidly due to COVID 19 and has since increased rapidly.
+## 5. Text Mining
 
-## <a id="mining">5. Text Mining</a>
+An patterns within those reviews? How does COVID 19 affect them? To answer such questions, let's explore the reviews by analyzing the popular words, [bigrams](https://en.wikipedia.org/wiki/Bigram) and [trigrams](https://en.wikipedia.org/wiki/Trigram), excluding stop words.
 
-Is there any hidden relationships within those reviews? How does COVID 19 affect them? Let's explore the reviews by analyzing the popular words, [bigrams](https://en.wikipedia.org/wiki/Bigram) and [trigrams](https://en.wikipedia.org/wiki/Trigram), excluding stop words.
-
-### <a id="words">5.1 Most common words</a>
-
-#### English
+### 5.1 Most common words
 
 
 ```R
-# add stop words of French and Spanish
-# and custom stop words such as "br", "bien", "tres", "très", etc.
-fr_stopwords <- tibble(word = stopwords("fr"), lexicon = c("custom"))
-es_stopwords <- tibble(word = stopwords("es"), lexicon = c("custom"))
-stop_words <- tibble(
-    word = c("br", "bien", "tres", "très", "chez", "mucha", "muchas", "mucho", "muchos"), 
-    lexicon = c("custom")
-  ) %>% 
-  bind_rows(es_stopwords) %>% 
-  bind_rows(fr_stopwords) %>%
-  bind_rows(tidytext::stop_words)
+# English stop words
+stop_words <- tidytext::stop_words
 
-# English reviews
-df_reviews_en <- df_reviews %>% 
-  filter(language == "english")
+# create function to generate word tokens of reviews
+generate_words <- function(df) {
+  words <- df %>%
+    mutate(line_num = row_number()) %>% 
+    unnest_tokens(word, reviews, drop = FALSE) %>%
+    distinct(line_num, word, .keep_all = TRUE) %>%
+    anti_join(stop_words, by = "word") %>% # ignore stop words 
+    filter(str_detect(word, "[^\\d]"))
+  return(words)
+}
 
-# Spanish and French reviews
-df_reviews_es_fr <- df_reviews %>% 
-  filter(language %in% c("spanish", "french"))
+barplot_word_freq <- function(words, n_rank=20, title, facet_wrap_language=FALSE, colors) {
+  if (!facet_wrap_language) {
+    words %>%
+      count(word, sort = TRUE) %>% 
+      head(n_rank) %>%
+      mutate(word = reorder(word, n)) %>% 
+      ggplot(aes(word, n, fill = -n)) +
+      geom_col() +
+      coord_flip() +
+      theme(legend.position = "none") +
+      labs(y = "# of uses", title = title) 
+  } else {
+    words %>%
+      count(language, word, sort = TRUE) %>% 
+      group_by(language) %>%
+      top_n(n_rank) %>%
+      mutate(word = reorder(word, n)) %>% 
+      ggplot(aes(word, n, fill = language)) +
+      scale_fill_manual(values = colors) +
+      geom_col() +
+      coord_flip() +
+      facet_wrap(~ language, scales = "free") + 
+      theme(legend.position = "none") +
+      labs(y = "# of uses", title = title)
+  }
+}
 
-words <- df_reviews_en %>%
-  mutate(line_num = row_number()) %>% 
-  unnest_tokens(word, reviews, drop = FALSE) %>%
-  distinct(line_num, word, .keep_all = TRUE) %>%
-  anti_join(stop_words, by = "word") %>% # ignore stop words 
-  filter(str_detect(word, "[^\\d]")) %>% 
-  group_by(word) %>%
-  mutate(word_total = n()) %>%
-  ungroup()
+words <- generate_words(df_reviews)
 
-words %>%
-    count(word, sort = TRUE) %>% 
-    head(20) %>%
-    mutate(word = reorder(word, n)) %>% 
-    ggplot(aes(word, n, fill = -n)) +
-    geom_col() +
-    coord_flip() +
-    theme(legend.position = "none") +
-    labs(y = "# of uses", title = "Top 20 most common English words in NYC Airbnb reviews")
-```
-
-
-    
-![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_45_0.png)
-    
-
-
-#### French and Spanish
-
-
-```R
-es_fr_words <- df_reviews_es_fr %>%
-  mutate(line_num = row_number()) %>% 
-  unnest_tokens(word, reviews, drop = FALSE) %>%
-  distinct(line_num, word, .keep_all = TRUE) %>%
-  anti_join(stop_words, by = "word") %>% # ignore stop words 
-  filter(str_detect(word, "[^\\d]"))
-
-es_fr_colors <- c("#4773aa", "#f9c642")
-
-es_fr_words %>%
-    count(language, word, sort = TRUE) %>% 
-    group_by(language) %>%
-    top_n(5) %>%
-    mutate(word = reorder(word, n)) %>% 
-    ggplot(aes(word, n, fill = language)) +
-    scale_fill_manual(values = es_fr_colors) +
-    geom_col() +
-    coord_flip() +
-    facet_wrap(~ language, scales = "free") + 
-    theme(legend.position = "none") +
-    labs(y = "# of uses", title = "Top 5 most common French/Spanish words in reviews")
+barplot_word_freq(words, 20, "Top 20 most common words in NYC Airbnb reviews")
 ```
 
     
-![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_47_1.png)
-    
+![png](/figs/airbnb-reviews-sentiment-analysis_files/airbnb-reviews-sentiment-analysis_30_0.png)
+   
 
-
-In English, the 2nd to 5th popular words are "clean", "location", "host", and "apartment", they contain important information.
-
-The top words in French are "subway", "apartment", "stay", "district", and "clean". In Spanish, they are "subway", "close", "place", "excellent", and "location".
+Among the top 20 most common words, the 2nd to 5th popular words are "clean", "location", "host", and "apartment", they contain important information.
 
 A reasonable assumption is apartment is one of the most popular listing types in NYC Airbnb, and guests care most about the cleanliness, location (especially subway) and service the host provides. 
 
 Let's continue our analysis and see if we can find evidence to support that assumption.
 
-### <a id="words_trend">5.2 Important words trending in reviews</a>
-
-#### English
+### 5.2 Important words trending in reviews
 
 
 ```R
-# create function to count word monthly percentage
-count_monthly_word <- function (df, words) {
+# plot monthly trend of selected words
+plot_word_trend <- function (df, words, word_filter, title) {
   reviews_per_month <- df %>%
     mutate(month = round_date(date, "month")) %>% 
     group_by(month) %>%
     summarize(month_total = n())
 
+  # count word monthly percentage
   word_month_counts <- words %>%
     mutate(month = round_date(date, "month")) %>% 
     count(word, month) %>%
@@ -666,82 +405,51 @@ count_monthly_word <- function (df, words) {
     inner_join(reviews_per_month, by = "month") %>%
     mutate(percent = n / month_total) %>%
     mutate(year = year(month) + yday(month) / 365) 
-    
-  return(word_month_counts)
+
+  word_month_counts %>%
+    filter(word %in% word_filter) %>%
+    ggplot(aes(month, n / month_total, color = word)) +
+    geom_line(size = 1, alpha = .8) +
+    scale_y_continuous(labels = percent_format()) +
+    facet_wrap(~ word, scales = "free_y") +
+#     expand_limits(y = 0) +
+    theme(legend.position = "none") +
+    labs(x = "Year",
+         y = "Percentage of reviews containing this term", 
+         title = title)    
 }
 
-# The top 5 most common words + "subway" (the most common words in French and Spanish)
-imp_en_words <- c("stay", "clean", "location", "apartment", "host", "subway")
+# The top 6 most common words
+word_filter <- c("stay", "clean", "location", "apartment", "host", "nice")
 
-word_month_counts <- count_monthly_word(df_reviews_en, words)
-
-word_month_counts %>%
-  filter(word %in% imp_en_words) %>%
-  ggplot(aes(month, n / month_total, color = word)) +
-  geom_line(size = 1, alpha = .8) +
-  scale_y_continuous(labels = percent_format()) +
-  facet_wrap(~ word, scales = "free_y") +
-  expand_limits(y = 0) +
-  theme(legend.position = "none") +
-  labs(x = "Year",
-       y = "Percentage of reviews containing this term", 
-       title = "Trends of most common English words in reviews")
+plot_word_trend(df_reviews, words, word_filter, "Trends of most common words in reviews")
 ```
 
 
     
-![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_50_0.png)
+![png](/figs/airbnb-reviews-sentiment-analysis_files/airbnb-reviews-sentiment-analysis_33_0.png)
     
 
 
-The trends are not obvious before 2015, since then, the popularity of "location" is slowly increasing, "clean" is relatively stable, while the others are decreasing.
+The popularity of "stay", "location", "clean" is slowly increasing, while the others are decreasing.
 
-#### French and Spanish
+### 5.3 Bigrams
 
-Let's find out the trends of most common French/Spanish words.
+A [bigram](https://en.wikipedia.org/wiki/Bigram) is a sequence of two adjacent elements from a string of tokens, which are typically letters, syllables, or words. A bigram is an n-gram for n=2.
 
 
 ```R
-imp_es_fr_words <- c("métro", "appartement", "séjour", "metro", "cerca", "lugar")
-
-word_month_counts_es_fr <- count_monthly_word(df_reviews_es_fr, es_fr_words)
-
-word_month_counts_es_fr %>%
-  filter(word %in% imp_es_fr_words) %>%
-  ggplot(aes(month, n / month_total, color = word)) +
-  geom_line(size = 1, alpha = .8) +
-  scale_y_continuous(labels = percent_format()) +
-  facet_wrap(~ word, scales = "free_y") +
-  expand_limits(y = 0) +
-  theme(legend.position = "none") +
-  labs(x = "Year",
-       y = "Percentage of reviews containing this term", 
-       title = "Trends of most common French/Spanish words in reviews")
-```
-
-
-    
-![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_52_0.png)
-    
-
-
-Trends of "cerca"("close" in English), "lugar" ("place" in English) and metro ("subway" in English) are increasing, while the others are still recovering from the shut down caused by COVID 19, which means COVID 19 affect more French guests than Spanish guests.
-
-### <a id="bigrams">5.3 Bigrams</a>
-
-#### English
-
-
-```R
-review_tokens <- df_reviews_en %>% 
+review_tokens <- df_reviews %>% 
   unnest_tokens(bigram, reviews, token = "ngrams", n = 2)
 
 review_separated <- review_tokens %>% 
   separate(bigram, into = c("word1", "word2"), sep = " ")
 
-review_bigrams <- review_separated %>% 
+review_separated_words <- review_separated %>% 
   filter(!word1 %in% stop_words$word) %>%
-  filter(!word2 %in% stop_words$word) %>% 
+  filter(!word2 %in% stop_words$word)
+
+review_bigrams <- review_separated_words %>% 
   unite(bigram, c(word1, word2), sep = " ")
 
 review_bigrams %>%
@@ -752,69 +460,31 @@ review_bigrams %>%
   geom_col() +
   coord_flip() +
   theme(legend.position = "none") +
-  labs(y = "# of uses", title = "Top 20 most common English bigrams in NYC Airbnb reviews")
+  labs(y = "# of uses", title = "Top 20 most common bigrams in NYC Airbnb reviews")
 ```
 
 
     
-![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_55_0.png)
+![png](/figs/airbnb-reviews-sentiment-analysis_files/airbnb-reviews-sentiment-analysis_36_0.png)
     
 
 
-Of those most common English bigrams, 10 of them are **location** related, such as "subway station", "central park", "perfect location", etc., Among accommodation-related words, **super clean** ranks much higher than "comfortable bed".
+Of those most common English bigrams, 10 of them are **location** related, such as "walking distance", "subway station", "central park", "times square", etc., Among accommodation-related words, **super clean** ranks much higher than "comfortable bed".
 Moreover, both "amazing host" and "wonderful host" are compliments to the **host**.
 
 That proves the importance of location, cleanliness and hosts.
 
-#### French and Spanish
+### 5.4 Bigrams network
+
+The network of bigrams shows how words are connected to each other.
 
 
 ```R
-review_tokens_es_fr <- df_reviews_es_fr %>% 
-  unnest_tokens(bigram, reviews, token = "ngrams", n = 2)
-
-review_separated_es_fr <- review_tokens_es_fr %>% 
-  separate(bigram, into = c("word1", "word2"), sep = " ")
-
-review_bigrams_es_fr <- review_separated_es_fr %>% 
-  filter(!word1 %in% stop_words$word) %>%
-  filter(!word2 %in% stop_words$word) %>% 
-  unite(bigram, c(word1, word2), sep = " ")
-
-review_bigrams_es_fr %>%
-  count(language, bigram, sort = TRUE) %>% 
-  group_by(language) %>%
-  top_n(5) %>%
-  mutate(bigram = reorder(bigram, n)) %>%
-  ggplot(aes(bigram, n, fill = language)) +
-  scale_fill_manual(values = es_fr_colors) +
-  geom_col() +
-  coord_flip() +
-  facet_wrap(~ language, scales = "free") + 
-  theme(legend.position = "none") +
-  labs(y = "# of uses", title = "Top 5 most common French/Spanish bigrams in reviews")
-```
-
-
-![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_57_1.png)
-    
-
-
-7 of those French and Spanish bigrams are general compliments like "good stay", "excellent place", but they mentioned places like "central park", another location-related word.
-
-### <a id="network">5.4 Bigrams network</a>
-
-Since French and Spanish reviews are highly similar to English and in smaller size, next let's plot the network of English bigrams only. 
-
-
-```R
-bigram_counts <- review_separated %>% 
-  filter(!word1 %in% stop_words$word,
-         !word2 %in% stop_words$word) %>% 
+bigram_counts <- review_separated_words %>% 
   count(word1, word2, sort = TRUE) 
 
 bigram_graph <- bigram_counts %>% 
-  filter(n >= 200) %>%
+  filter(n >= 2000) %>%
   as_tbl_graph()
 
 arrow <- grid::arrow(type = "closed", length = unit(.15, "inches"))
@@ -827,16 +497,25 @@ ggraph(bigram_graph, layout = "fr") +
   labs(title = "Network of bigrams in NYC Airbnb reviews")
 ```
 
-   
-![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_59_1.png)
+    Warning message in grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y, :
+    “conversion failure on 'can’t' in 'mbcsToSbcs': dot substituted for <e2>”
+    Warning message in grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y, :
+    “conversion failure on 'can’t' in 'mbcsToSbcs': dot substituted for <80>”
+    Warning message in grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y, :
+    “conversion failure on 'can’t' in 'mbcsToSbcs': dot substituted for <99>”
+
+
+
+    
+![png](/figs/airbnb-reviews-sentiment-analysis_files/airbnb-reviews-sentiment-analysis_39_1.png)
     
 
 
-The graph shows popular bigrams that occur at least 200 times. According to the graph, words like "stay", "apartment", "location" and "host" have strong connections with many other words, but there is no clear clustering structure.
+The graph shows popular bigrams that occur at least 2000 times. According to the graph, words like "stay", "apartment", "clean" and "host" have strong connections with many other words, but there is no clear clustering structure.
 
-### <a id="trigrams">5.5 Trigrams</a>
+### 5.5 Trigrams
 
-#### English
+Similar to Bigrams, [Trigram](https://en.wikipedia.org/wiki/Trigram) (n-gram=3) is a three-word sequence of words. Let's get the top 20 most popular trigrams.
 
 
 ```R
@@ -856,9 +535,9 @@ get_trigrams <- function(df) {
   return(review_trigrams)
 }
 
-review_trigrams_en <- get_trigrams(df_reviews_en)
+review_trigrams <- get_trigrams(df_reviews)
 
-review_trigrams_en %>%
+review_trigrams %>%
   count(trigram, sort = TRUE) %>% 
   head(20) %>% 
   mutate(trigram = reorder(trigram, n)) %>%
@@ -866,69 +545,45 @@ review_trigrams_en %>%
   geom_col() +
   coord_flip() +
   theme(legend.position = "none") +
-  labs(y = "# of uses", title = "Top 20 most common English trigrams in NYC Airbnb reviews")
+  labs(y = "# of uses", title = "Top 20 most common trigrams in NYC Airbnb reviews")
 ```
 
 
     
-![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_62_0.png)
+![png](/figs/airbnb-reviews-sentiment-analysis_files/airbnb-reviews-sentiment-analysis_42_0.png)
     
 
 
-English trigrams are heavily related to **minute walk**, it's also one of the most common bigrams.
+Trigrams are heavily related to **minute walk**, it's also one of the most common bigrams.
 
-#### French and Spanish
-
-
-```R
-options(repr.plot.width = 12, repr.plot.height = 4)
-
-review_trigrams_es_fr <- get_trigrams(df_reviews_es_fr)
-
-review_trigrams_es_fr %>%
-  count(language, trigram, sort = TRUE) %>% 
-  group_by(language) %>%
-  top_n(5) %>%
-  mutate(trigram = reorder(trigram, n)) %>%
-  ggplot(aes(trigram, n, fill = language)) +
-  scale_fill_manual(values = es_fr_colors) +
-  geom_col() +
-  coord_flip() +
-  facet_wrap(~ language, scales = "free") +
-  theme(legend.position = "none") +
-  labs(y = "# of uses", title = "Top 5 most common French/Spanish trigrams in reviews")
-```
-
-    
-![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_65_1.png)
-    
-
-
-French/Spanish trigrams (the top 2 are "value for money" and "good value") are not as detailed as in English trigrams, but Spanish trigrams have "5/10 minutes walk" too, even though they occured just a few times.
-
-### <a id="clouds">5.6 Word clouds</a>
+### 5.6 Word clouds
 
 The key phrase "minute walk"(and "min walk") show up in both common bigrams and trigrams, which indicates many reviewers walk and they care about the walking time. Let's visualize the walking starting and ending points by wordclouds.
 
-**Walking starting points**
+#### Walking starting points
 
 
 ```R
-toks_en <- tokens(df_reviews_en$reviews)
-# get sentences
-kw_start_en <- kwic(toks_en, pattern = c(phrase("minute walk from*"), 
-                                         phrase("min walk from*"),
-                                         phrase("minutes walk from*"),
-                                         phrase("mins walk from*")))
+start_keywords <- c(phrase("minute walk from*"), 
+                    phrase("min walk from*"),
+                    phrase("minutes walk from*"),
+                    phrase("mins walk from*"))
 
-# group by start points
-start_points <- kw_start_en %>% 
-  unnest_tokens(word, post, drop = FALSE) %>% 
-  anti_join(stop_words, by = "word") %>% 
-  filter(str_detect(word, "[^\\d]")) %>% 
-  count(word, sort = TRUE)
+wordcloud_by_keywords <- function(df, keywords) {
+  review_tokens <- tokens(df$reviews)      
+  # get sentences with keywords
+  kw <- kwic(review_tokens, pattern = keywords)  
+  # group by start points
+  word_count <- kw %>% 
+    unnest_tokens(word, post, drop = FALSE) %>% 
+    anti_join(stop_words, by = "word") %>% 
+    filter(str_detect(word, "[^\\d]")) %>% 
+    count(word, sort = TRUE)
 
-wordcloud2(start_points, rotateRatio = 0, widgetsize =c("700","350"))
+  wordcloud2(word_count, rotateRatio = 0, widgetsize =c("700","350"))    
+}
+
+wordcloud_by_keywords(df_reviews, start_keywords)
 ```
 
 
@@ -943,31 +598,23 @@ wordcloud2(start_points, rotateRatio = 0, widgetsize =c("700","350"))
 <script title="wordcloud2-binding" src="data:application/javascript;base64,SFRNTFdpZGdldHMud2lkZ2V0KHsKCiAgbmFtZTogJ3dvcmRjbG91ZDInLAoKICB0eXBlOiAnb3V0cHV0JywKCiAgaW5pdGlhbGl6ZTogZnVuY3Rpb24oZWwsIHdpZHRoLCBoZWlnaHQpIHsKICAgIHZhciBuZXdDYW52YXMgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCJjYW52YXMiKTsKICAgIG5ld0NhbnZhcy5oZWlnaHQgPSBoZWlnaHQ7CiAgICBuZXdDYW52YXMud2lkdGggPSB3aWR0aDsKICAgIG5ld0NhbnZhcy5pZCA9ICJjYW52YXMiOwoKICAgIGVsLmFwcGVuZENoaWxkKG5ld0NhbnZhcyk7CiAgICBuZXdsYWJlbChlbCk7CiAgICByZXR1cm4oZWwuZmlyc3RDaGlsZCk7CiAgfSwKICByZW5kZXJWYWx1ZTogZnVuY3Rpb24oZWwsIHgsIGluc3RhbmNlKSB7CiAgLy8gcGFyc2UgZ2V4ZiBkYXRhCiAgICAgICAgbGlzdERhdGE9W107CiAgICAgICAgZm9yKHZhciBpPTA7IGk8eC53b3JkLmxlbmd0aDsgaSsrKXsKICAgICAgICAgIGxpc3REYXRhLnB1c2goW3gud29yZFtpXSwgeC5mcmVxW2ldXSk7CiAgICAgICAgfQogICAgIGlmKHguZmlnQmFzZTY0KXsKCiAgICAgICAgbWFza0luaXQoZWwseCk7CiAgICAgICAgY29uc29sZS5sb2coMykKCiAgICAgIH1lbHNlewogICAgICAgIFdvcmRDbG91ZChlbC5maXJzdENoaWxkLCB7IGxpc3Q6IGxpc3REYXRhLAogICAgICAgICAgICAgICAgICAgICAgICBmb250RmFtaWx5OiB4LmZvbnRGYW1pbHksCiAgICAgICAgICAgICAgICAgICAgICAgIGZvbnRXZWlnaHQ6IHguZm9udFdlaWdodCwKICAgICAgICAgICAgICAgICAgICAgICAgY29sb3I6IHguY29sb3IsCiAgICAgICAgICAgICAgICAgICAgICAgIG1pblNpemU6IHgubWluU2l6ZSwKICAgICAgICAgICAgICAgICAgICAgICAgd2VpZ2h0RmFjdG9yOiB4LndlaWdodEZhY3RvciwKICAgICAgICAgICAgICAgICAgICAgICAgYmFja2dyb3VuZENvbG9yOiB4LmJhY2tncm91bmRDb2xvciwKICAgICAgICAgICAgICAgICAgICAgICAgZ3JpZFNpemU6IHguZ3JpZFNpemUsCiAgICAgICAgICAgICAgICAgICAgICAgIG1pblJvdGF0aW9uOiB4Lm1pblJvdGF0aW9uLAogICAgICAgICAgICAgICAgICAgICAgICBtYXhSb3RhdGlvbjogeC5tYXhSb3RhdGlvbiwKICAgICAgICAgICAgICAgICAgICAgICAgc2h1ZmZsZTogeC5zaHVmZmxlLAogICAgICAgICAgICAgICAgICAgICAgICBzaGFwZTogeC5zaGFwZSwKICAgICAgICAgICAgICAgICAgICAgICAgcm90YXRlUmF0aW86IHgucm90YXRlUmF0aW8sCiAgICAgICAgICAgICAgICAgICAgICAgIGVsbGlwdGljaXR5OiB4LmVsbGlwdGljaXR5LAogICAgICAgICAgICAgICAgICAgICAgICBkcmF3TWFzazogeC5kcmF3TWFzaywKICAgICAgICAgICAgICAgICAgICAgICAgbWFza0NvbG9yOiB4Lm1hc2tDb2xvciwKICAgICAgICAgICAgICAgICAgICAgICAgbWFza0dhcFdpZHRoOiB4Lm1hc2tHYXBXaWR0aCwKICAgICAgICAgICAgICAgICAgICAgICAgaG92ZXI6IHguaG92ZXIgfHwgY3ZfaGFuZGxlSG92ZXIKICAgICAgICAgICAgICAgICAgICAgICAgfSk7CiAgICAgIH0KICAgIH0sCiAgICAgIHJlc2l6ZTogZnVuY3Rpb24oZWwsIHdpZHRoLCBoZWlnaHQpIHsKICAgICAgfQoKfSk7Cg=="></script>
 	</head>
 	<body>
-		<div id="htmlwidget-e325aa60956ef367ed35" style="width:700px;height:350px;" class="wordcloud2 html-widget"></div>
-<script type="application/json" data-for="htmlwidget-e325aa60956ef367ed35">{"x":{"word":["subway","station","apartment","train","house","metro","square","park","nearest","line","stop","central","takes","bus","stations","times","restaurants","time","avenue","lines","prospect","apt","close","easy","grand","main","penn","st","ave","beach","ferry","minutes","neighborhood","street","closest","lots","manhattan","min","nice","north","quiet","stops","subways","access","bars","bedford","broadway","brooklyn","building","center","convenient","flat","friendly","grocery","island","property","recommend","stores","union","103rd","ac","astor","av","beautiful","bridge","church","clean","columbia","communication","connects","couple","delis","directly","doorstep","dumbo","edge","enjoyed","express","front","greenwich","highly","home","hospital","host","hosts","location","loved","major","mins","minute","nostrand","parkside","path","pennsylvania","plenty","public","shops","soho","stadium","staten","stay","store","super","trains","trendy","tube","underground","university","view","village","water","williamsburg","yankee","100s","125th","145th","30th","3rd","42nd","46th","4av","72st","7th","accessibility","accommodating","accommodation","airbnb","airbnb.had","airport","amazing","amazon","anthony","astoria","awesome","backyard","barclay","barclays","bayside","beast","bed","beech","beverley","bit","blowing","boardwalk","boulevard","boundary","breakfast","brilliant","brings","bucky","bungalow","buses","busses","bustling","calm","catch","central.fifth","chelsea","cil's","circle","citibike","closet","coffee","columbus","comedy","communicating","commuter","condo","connected","connecting","connection","convenience","convention","core","costs","could'nt","countless","covid","ctr","dan","daughter's","deirdre","delancey","delton","direct","district","donut","door","east","eat","elmhurst","empire","essex","extremely","fairly","fast","flatbush","flushing","food","found","franklin","fun","garden","giant","giving","gowanus","grasmere","green","greenpoint","gripe","guardia","guest","gym","hanging","happening","harlem","helpful","historic","honored","hope","iconic","ideal","incredibility","incredibly","jason's","jeff's","jewel","jody's","john","kew","kim's","kingston","lead","links","local","located","locations","lowery","makes","mall","marcy","market","markets","met","michael","mind","msg","multiple","myrtle","nassau","newkirk","northern","numerous","nyp","offers","orange","orhun's","pan","pastry","people","perfect","peter","pictures","port","pretty","price","promenade","purple","queens","rail","ramon","randall's","recommended","red","restaurant","road","roosevelt","route","run","sadie","safe","sara's","serves","shopping","skyline","slope","space","sq","sqr","steps","straightforward","streets","subwaystation","supermarket","supermarkets","svjetlana","taxi","terminal","testing","that'll","theater","throop","throwing","timo","top","trade","transit","transportation","travis","trip","typically","udo","uncomfortable","und","utica","variety","vegan","vessel","views","vinneth","walk","walkable","walked","washington","waterfront","weekends","wich","wil","woodhaven","world","yang","youssef","zain"],"freq":[221,130,58,54,25,23,23,22,20,19,19,18,16,15,15,13,10,8,7,7,7,6,6,6,6,6,6,6,5,5,5,5,5,5,4,4,4,4,4,4,4,4,4,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"fontFamily":"Segoe UI","fontWeight":"bold","color":"random-dark","minSize":0,"weightFactor":0.81447963800905,"backgroundColor":"white","gridSize":0,"minRotation":-0.785398163397448,"maxRotation":0.785398163397448,"shuffle":true,"rotateRatio":0,"shape":"circle","ellipticity":0.65,"figBase64":null,"hover":null},"evals":[],"jsHooks":{"render":[{"code":"function(el,x){\n                        console.log(123);\n                        if(!iii){\n                          window.location.reload();\n                          iii = False;\n\n                        }\n  }","data":null}]}}</script>
+		<div id="htmlwidget-1602df5fc8a16e2bd758" style="width:700px;height:350px;" class="wordcloud2 html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1602df5fc8a16e2bd758">{"x":{"word":["subway","station","train","apartment","metro","park","nearest","line","square","central","times","house","stop","stations","lines","restaurants","takes","manhattan","bus","easy","close","penn","ave","street","st","beach","lots","trains","ferry","main","prospect","door","avenue","stops","highly","closest","grocery","brooklyn","minutes","time","min","shops","bars","nice","astoria","bedford","check","convenient","front","neighborhood","recommend","home","super","broadway","grand","location","stores","williamsburg","access","building","clean","host","local","major","multiple","subways","airbnb","supermarket","center","communication","plenty","store","airport","island","perfect","flat","utica","bridge","express","quiet","apt","av","coffee","hospital","safe","terminal","union","direct","downtown","lirr","nearby","stay","amazing","flushing","food","mins","shopping","beautiful","couple","halsey","loved","makes","marcy","recommended","soho","air","barclays","bed","columbia","jamaica","laguardia","lga","minute","myrtle","nostrand","walking","appartment","bnb","buses","centre","green","hosts","kitchen","quick","restaurant","staten","straight","walk","ac","block","blvd","cafes","entrance","excellent","lot","lovely","office","port","space","stadium","supermarkets","transportation","tube","underground","village","125th","appartement","authority","blue","boardwalk","city","connections","enjoyed","foods","market","msg","mta","museum","nyc","pretty","public","ralph","rockaway","shop","tons","town","university","venue","views","washington","allowed","allowing","atlantic","beds","boulevard","brings","church","cool","ditmars","east","empire","free","friendly","harlem","heart","hotel","met","montrose","neighbourhood","pharmacy","property","red","staff","stayed","transit","water","yankee","36th","attractions","citi","comfy","connects","convenience","costs","deli","delis","depending","directly","domino","doorstep","family","garden","gorgeous","greenpoint","hope","hudson","including","jfk","key","kings","located","night","parks","parkway","railroad","river","road","roosevelt","spots","starbucks","theatre","travel","trendy","unit","view","waterfront","110th","145th","30th","40th","4th","5th","96th","accessible","action","appreciated","art","astor","botanical","bryant","bushwick","bustling","busy","called","chelsea","comfortable","commercial","coney","cortelyou","cozy","cvs","deal","delicious","dumbo","easily","eateries","flatbush","forest","franklin","fulton","gardens","groceries","hall","italy","kingston","laundromat","links","lively","lowery","madison","metros","midtown","museums","north","numerous","ny","pennsylvania","plaza","price","queens","rail","reach","ride","rockefeller","route","short","size","spot","sq","sterling","target","theater","theaters","theatres","trade","trip","walgreens","washer","wilson","world","111th","30min","3rd","42nd","46th","86th","9th","absolute","ace","affordable","alex","amenities","awesome","bagel","bar","bathroom","battery","bayside","bedroom","beverly","bit","bodegas","botanic","bound","bring","bronx","brook","bustle","canarsie","carroll","catch","chinatown","chinese","choices","common","commuting","complaint","connection","conveniently","convention","countless","daughter's","daughters","dekalb","diana's","distance","dog","eat","euclid","exploring","extremely","ez","famous","farmers","fast","favorite","feels","floor","found","frequent","fun","giant","graham","greenwich","guardia","guest","head","helped","highway","hills","historic","honestly","ice","ideal","incredibly","iron","javits","jazz","jz","korea","la","laundry","leads","les","lisa","listing","locations","lorimer","m60","mall","mark","marks","matt","means","michelle","mirage","montefiore","newkirk","orange","parking","perfectly","pier","pizza","pizzeria","private","provided","ramon","robert","routes","row","runs","russ","service","sites","situated","son","spacious","streets","strip","studio","suggest","sunset","surrounded","that'll","time's","timesquare","tompkins","top","totally","trader","traveling","univ","van","walked","walls","weekends","whitney","woodside","worth","wtc","wyck","york","zain","zoo","100s","116th","125st","12mins","135th","14th","15mn","15th","168st","168th","18th","190st","1min","23rd","2nd","3,4","32nd","4,5","45min","4av","72nd","72st","74th","7ave","86thstreet","88th","90st","abby","abcd","absolutely","accommodating","accommodation","acres","acs","active","activities","actual","addition","adjacent","aimed","airb","airline","airtrain","airtram","albans","aldi","aldi's","alexandra","amenity","amir","amir's","ammons","amtrak","amusement","amy's","andrew","angelica","anna","anne","anthony","antonella","apartament","apollo","arin","arrival","arrived","asad's","ashley","asses","austin","avon","aware","backyard","bad","bagels","balcony","balthazar","bam","barclay","barclay's","base","basement","basically","basket","batter","bdm","bear","bedrooms","beebee","beech","bell","beth's","beverley","bike","bikes","bill","biren","bld","bleach","blocks","blowing","bo's","boat","bodega","border","borough","botancal","bowery","box","bradley's","breakfast","breweries","brighton","brilliant","brooklyn's","bruce","bucky","bunch","busses","bx28","bx38","bx9","cafés","calm","camilles","carnegie","carolyn","casey","cemetery","centeral","central.fifth","chauncey","cheap","children","china","christmas","christopher","circle","citibike","citifield","claudia's","cloisters","closer","closet","clubs","coffees","columbus","coming","communicated","complaints","complete","conclude","condo","connect","conor","consideration","conveniences","convient","cooking","coolest","core","corner","costanza","court","covid","cream","crescent","cultural","cumc","cypress","dan","dana's","daphnee's","dark","darryl","daughter","day","decent","dee","def","defo","deirdre","destination","destinations","diana","direction","district","diverse","dollar","donald","dont","downsides","drop","dropped","drove","dryer","dunkins","easilly","eats","ed","edge","edna","efficient","efmr","elisabeth's","elizabeth","ely","endless","enjoy","enter","entering","entry","epicenter","equipped","eric","ervita","esb","esp","espress","ester's","evan","exceptionally","exterior","eyal's","fabulous","fairly","famiy","fantastic","father","federico","feel","felicia","felix","fernando","fg","fine","flight","fort","friends","ft","galleries","garage","gary","gas","gate","george","giving","gramery","grateful","greek","greene","greenwood","greg","gripe","ground","gym","half","hamilton","hard","heads","heard","helsey","hewes","hey","highline","highstreet","hights","hill","hop","hoppin","hour","house.i","howard","huge","husband","hustle","immaculate","incredibility","indications","indoor","inn","interior","issue","izabel","jack's","jacobi","jae","jamie","jammie","jeff","jefferson","jemny","jewel","jhon","jmz","jody's","joe's","joes","john","joseph's","journey","judie","julian","julio","junction","juniper","katelyn","katz","kavya's","kew","kian","kinds","kingsbrook","kingstone","koichi","koreatown","kosciuszko","ktown","kumar","lake","land","landmarks","larger","lastly","launderette","laundrette","laurie's","lead","lebanon","lenox","liberty","library","lincoln","linda","linda's","lit","literally","live","loads","lot's","lou","louisa","lower","lucas","lucky's","luggage","luisa","lush","maddison","maimonides","margaret","marian","marina","marketplace","markets","marta's","martha's","martin's","mat","meadows","meant","meat","mecca","memorial","memory","merine","metra","metropolitan","metrostations","mexican","miao","micah","michael","michelle's","middle","mie","miguel","mike","mile","milk","miloš","milton","mind","miriam","miriam's","modern","moma","morris","mount","movie","moynihan","mtr","multi","multiplex","multitude","nadir","nassau","natasha's","nathan's","natural","necessities","neck","negative","negra","neighbors","nereid","nevins","news","nicely","nick's","nightlife","nights","noho","noisy","norstrand","ny's","nyp","nyu","offer","offers","ohel","olga","opposite","options","oscar","oshane","owner","parent","parka","parkside","passang","passes","past","patricks","pelham","pennstation","people","photo's","pickup","pictures","plan","platform","playground","pond","popular","porch","postcards","prefer","prime","promised","promptly","proximity","purple","q83","queen's","queensborough","quickly","rachel","rack","radio","raju","ramen","ran","randall's","raymond","reaches","reaching","real","rebecca","reccomend","received","recently","renato","rental","replies","residence","responses","retaurant","rides","rio","rockway","rohan","roman's","ronald","rooftop","rosedale","roughly","rumc","run","rutland","s.i","sadie","sadly","sandra","sara","saraghina","saturday","sbs","schmuel","school","section","secure","selection","sends","serval","serves","services","serving","sheets","shepard","shepherd","shot","shuttle","silver","simon","simone's","sinai","sixth","skip","skyline","slept","smith","smooth","sne","sorts","sparkling","specific","sqr","square.l","squares","squer","sta","station.the","statue","staying","steinway","step","stephan","steps","steve's","stevens","stocked","straightforward","strategic","stuff","stunning","stuy","stylish","sugar","sunny","supermalls","supermarkt","supplied","surprisingly","sutphin","sutter","suzette","svjetlana","taking","tasted","taverna","temp","tenant","terrance","testing","tha","thankyou","thea","thegrand","thorpe","thrift","throops","throwing","tickets","timo","todd","ton","tony","topu's","touring","tracey","train.bed","tram","tramway","transfer","transport","travis","trinidadian","true","twin","typically","uber","uchenna","upper","uttica","va","vehicle","venturing","venues","vernon","vessel","vibes","vice","vinneth","visit","visiting","weiler","welcoming","west","wholefoods","wholesome","wich","wife","wifi","williamsburg's","willoughby","wonderful","woodhaven","yang","yellow","youssef","yum","yuting","zuleide"],"freq":[1523,806,477,273,231,172,156,144,140,118,101,98,95,81,76,67,61,57,56,51,46,46,45,43,42,41,39,39,38,35,35,34,31,31,29,28,28,27,27,27,26,26,25,24,22,22,22,22,22,22,22,21,21,20,20,20,20,20,19,19,19,19,19,19,19,19,18,18,17,17,17,17,16,16,16,15,15,14,14,14,13,13,13,13,13,13,13,12,12,12,12,12,11,11,11,11,11,10,10,10,10,10,10,10,10,9,9,9,9,9,9,9,9,9,9,9,8,8,8,8,8,8,8,8,8,8,8,8,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"fontFamily":"Segoe UI","fontWeight":"bold","color":"random-dark","minSize":0,"weightFactor":0.118187787261983,"backgroundColor":"white","gridSize":0,"minRotation":-0.785398163397448,"maxRotation":0.785398163397448,"shuffle":true,"rotateRatio":0,"shape":"circle","ellipticity":0.65,"figBase64":null,"hover":null},"evals":[],"jsHooks":{"render":[{"code":"function(el,x){\n                        console.log(123);\n                        if(!iii){\n                          window.location.reload();\n                          iii = False;\n\n                        }\n  }","data":null}]}}</script>
 	</body>
 </html>
 
 
 
-**Walking ending points**
+#### Walking ending points
 
 
 ```R
-# get sentences
-kw_end_en <- kwic(toks_en, pattern = c(phrase("minute walk to*"), 
-                                       phrase("min walk to*"),
-                                       phrase("minutes walk to*"),
-                                       phrase("mins walk to*")))
+end_keywords <- c(phrase("minute walk to*"),
+                  phrase("min walk to*"),
+                  phrase("minutes walk to*"),
+                  phrase("mins walk to*"))
 
-# group by end points
-end_points <- kw_end_en %>% 
-  unnest_tokens(word, post, drop = FALSE) %>% 
-  anti_join(stop_words, by = "word") %>% 
-  filter(str_detect(word, "[^\\d]")) %>% 
-  count(word, sort = TRUE)
-
-wordcloud2(end_points, rotateRatio = 0, widgetsize =c("700","350"))
+wordcloud_by_keywords(df_reviews, end_keywords)
 ```
 
 
@@ -982,31 +629,29 @@ wordcloud2(end_points, rotateRatio = 0, widgetsize =c("700","350"))
 <script title="wordcloud2-binding" src="data:application/javascript;base64,SFRNTFdpZGdldHMud2lkZ2V0KHsKCiAgbmFtZTogJ3dvcmRjbG91ZDInLAoKICB0eXBlOiAnb3V0cHV0JywKCiAgaW5pdGlhbGl6ZTogZnVuY3Rpb24oZWwsIHdpZHRoLCBoZWlnaHQpIHsKICAgIHZhciBuZXdDYW52YXMgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCJjYW52YXMiKTsKICAgIG5ld0NhbnZhcy5oZWlnaHQgPSBoZWlnaHQ7CiAgICBuZXdDYW52YXMud2lkdGggPSB3aWR0aDsKICAgIG5ld0NhbnZhcy5pZCA9ICJjYW52YXMiOwoKICAgIGVsLmFwcGVuZENoaWxkKG5ld0NhbnZhcyk7CiAgICBuZXdsYWJlbChlbCk7CiAgICByZXR1cm4oZWwuZmlyc3RDaGlsZCk7CiAgfSwKICByZW5kZXJWYWx1ZTogZnVuY3Rpb24oZWwsIHgsIGluc3RhbmNlKSB7CiAgLy8gcGFyc2UgZ2V4ZiBkYXRhCiAgICAgICAgbGlzdERhdGE9W107CiAgICAgICAgZm9yKHZhciBpPTA7IGk8eC53b3JkLmxlbmd0aDsgaSsrKXsKICAgICAgICAgIGxpc3REYXRhLnB1c2goW3gud29yZFtpXSwgeC5mcmVxW2ldXSk7CiAgICAgICAgfQogICAgIGlmKHguZmlnQmFzZTY0KXsKCiAgICAgICAgbWFza0luaXQoZWwseCk7CiAgICAgICAgY29uc29sZS5sb2coMykKCiAgICAgIH1lbHNlewogICAgICAgIFdvcmRDbG91ZChlbC5maXJzdENoaWxkLCB7IGxpc3Q6IGxpc3REYXRhLAogICAgICAgICAgICAgICAgICAgICAgICBmb250RmFtaWx5OiB4LmZvbnRGYW1pbHksCiAgICAgICAgICAgICAgICAgICAgICAgIGZvbnRXZWlnaHQ6IHguZm9udFdlaWdodCwKICAgICAgICAgICAgICAgICAgICAgICAgY29sb3I6IHguY29sb3IsCiAgICAgICAgICAgICAgICAgICAgICAgIG1pblNpemU6IHgubWluU2l6ZSwKICAgICAgICAgICAgICAgICAgICAgICAgd2VpZ2h0RmFjdG9yOiB4LndlaWdodEZhY3RvciwKICAgICAgICAgICAgICAgICAgICAgICAgYmFja2dyb3VuZENvbG9yOiB4LmJhY2tncm91bmRDb2xvciwKICAgICAgICAgICAgICAgICAgICAgICAgZ3JpZFNpemU6IHguZ3JpZFNpemUsCiAgICAgICAgICAgICAgICAgICAgICAgIG1pblJvdGF0aW9uOiB4Lm1pblJvdGF0aW9uLAogICAgICAgICAgICAgICAgICAgICAgICBtYXhSb3RhdGlvbjogeC5tYXhSb3RhdGlvbiwKICAgICAgICAgICAgICAgICAgICAgICAgc2h1ZmZsZTogeC5zaHVmZmxlLAogICAgICAgICAgICAgICAgICAgICAgICBzaGFwZTogeC5zaGFwZSwKICAgICAgICAgICAgICAgICAgICAgICAgcm90YXRlUmF0aW86IHgucm90YXRlUmF0aW8sCiAgICAgICAgICAgICAgICAgICAgICAgIGVsbGlwdGljaXR5OiB4LmVsbGlwdGljaXR5LAogICAgICAgICAgICAgICAgICAgICAgICBkcmF3TWFzazogeC5kcmF3TWFzaywKICAgICAgICAgICAgICAgICAgICAgICAgbWFza0NvbG9yOiB4Lm1hc2tDb2xvciwKICAgICAgICAgICAgICAgICAgICAgICAgbWFza0dhcFdpZHRoOiB4Lm1hc2tHYXBXaWR0aCwKICAgICAgICAgICAgICAgICAgICAgICAgaG92ZXI6IHguaG92ZXIgfHwgY3ZfaGFuZGxlSG92ZXIKICAgICAgICAgICAgICAgICAgICAgICAgfSk7CiAgICAgIH0KICAgIH0sCiAgICAgIHJlc2l6ZTogZnVuY3Rpb24oZWwsIHdpZHRoLCBoZWlnaHQpIHsKICAgICAgfQoKfSk7Cg=="></script>
 	</head>
 	<body>
-		<div id="htmlwidget-b7a24e13a89d79873ac5" style="width:700px;height:350px;" class="wordcloud2 html-widget"></div>
-<script type="application/json" data-for="htmlwidget-b7a24e13a89d79873ac5">{"x":{"word":["subway","station","train","nearest","metro","park","square","central","times","line","takes","bus","restaurants","stop","stations","ferry","beach","lines","manhattan","minutes","trains","st","brooklyn","avenue","grocery","ave","closest","min","close","easy","main","prospect","shops","subways","apartment","center","broadway","food","grand","lots","minute","street","bridge","convenient","downtown","express","host","neighborhood","nice","path","public","union","walk","access","direct","stops","terminal","williamsburg","columbia","island","mins","safe","soho","stores","supermarket","bars","catch","clean","district","essex","flushing","hosts","local","mta","multiple","museum","parking","plenty","recommend","stadium","straight","university","125th","barclays","beautiful","bedford","building","city","coffee","connect","decent","delancey","east","empire","franklin","fulton","gates","house","links","lirr","lorimer","major","makes","marcy","market","met","penn","pretty","quick","restaurant","ride","short","staten","store","super","supermarkets","time","transport","transportation","underground","utica","view","washington","wonderful","116th","7th","accessible","ace","additionally","amazing","astor","bed","bergen","boardwalk","botanical","brings","called","check","chinatown","coney","couple","danielle","delis","dollar","family","forest","friendly","ft","green","greene","heart","hipster","hospital","hudson","jfk","location","lot","loved","montrose","nearby","nostrand","nyc","peaceful","pier","pl","promenade","red","river","rockaway","rockefeller","shopping","site","space","spots","stay","taking","ten","theater","theatre","trail","water","waterfront","wholefoods","yankee","1,2,3","110th","14th","157th","15th","1h","1st","2,3","20min","24h","33rd","36th","4,5,6","45mins","4th","5th","9th","ac","accessibility","accommodating","aircraft","alex","allowed","amenities","approx","approximately","apt","arrived","arthur","ashe","astoria","atlantic","attractions","authority","av","b6","bad","barclay's","battery","bayside","beat","beneath","bikes","blooming","bodegas","boroughs","bound","boutiques","bowery","breakfast","brighton","briskly","brooklyn's","brought","built","busses","bustling","busy","buy","cafe","cafes","campuses","carnarsie","carrier","centre","checking","chelsea","church","cil","citi","clinton","coffe","coffeeshops","coin","comfortable","communicated","communication","commute","concourse","connections","conveniently","cool","corner","costco","cozy","crowded","cute","cyprus","david","decor","dekalb","deli","depending","diner","direction","directly","ditmar","donut","dorina","downstairs","drink","earl","easily","eating","eats","eddie","elma","entrance","equinox","essentially","euclid","excellent","excels","exchange","experience","fantastic","ferries","fifteen","financial","fine","flea","foods","fort","frequent","friend","fun","garden","giselle","gorgeous","grab","graham","grounds","grove","gun","halsey","harbor","head","heading","heather","heights","helpful","her's","herald","highline","highly","highway","hill","hills","home","hours","hub","huge","ideally","including","incredible","india","insanely","intrepid","isnt","jaime","jan","javits","jc","jeevan","jmz","joanna","joe","john's","junction","kai","kids","kings","lane","laundry","laurelton","leading","leads","leaves","lexington","lexingtown","lga","listing","literally","love","lovely","lower","m60","macys","mango","mark","marlow's","mart","master","meadows","memorial","metropolitan","michal","middle","mike's","mile","milstein","mini","monica's","montague","morgan","morning","mount","musuem","myrtle","nanonte","natural","neighbourhood","nook","nordstrom","north","noted","numerous","opera","parents","parks","parkway","perfect","perk","pharmacy","piers","pleased","port","private","proper","q30","queen","quiet","railway","reachable","refreshed","regularly","rentals","responded","restuarants","riverside","rosedale","samira","scene","scenic","section","selection","service","serviced","shop","shoreline","shower","shuttle","sights","sinai","sirr","sites","situated","skyline","slope","son's","spacious","sq","squares","stairs","starbuck","starbucks","staying","stays","steinway","stn","stuck","stuyvesant","subway.moe","superstore","surf","suzette","swann","system","tacos","target","taste","taxi","terrace","thé","theaters","theatres","ti.es","timo","tiwn","tons","tony","tourist","tournament","town","trade","trader","traders","trails","transit","travelling","tremont","trendy","true","und","uptown","van","views","walgreens","walls","west","whimsical","wifi","williamsberg","wilson's","world","worth","wyckoff","yana's","yankees","york","zerega"],"freq":[500,223,156,56,50,48,45,36,33,32,32,31,27,24,23,18,17,16,16,16,16,14,13,12,12,11,11,11,10,10,10,10,10,10,9,9,8,8,8,8,8,8,7,7,7,7,7,7,7,7,7,7,7,6,6,6,6,6,5,5,5,5,5,5,5,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"fontFamily":"Segoe UI","fontWeight":"bold","color":"random-dark","minSize":0,"weightFactor":0.36,"backgroundColor":"white","gridSize":0,"minRotation":-0.785398163397448,"maxRotation":0.785398163397448,"shuffle":true,"rotateRatio":0,"shape":"circle","ellipticity":0.65,"figBase64":null,"hover":null},"evals":[],"jsHooks":{"render":[{"code":"function(el,x){\n                        console.log(123);\n                        if(!iii){\n                          window.location.reload();\n                          iii = False;\n\n                        }\n  }","data":null}]}}</script>
+		<div id="htmlwidget-ace37edf80de2a478c78" style="width:700px;height:350px;" class="wordcloud2 html-widget"></div>
+<script type="application/json" data-for="htmlwidget-ace37edf80de2a478c78">{"x":{"word":["subway","station","train","metro","nearest","park","square","central","line","times","stop","stations","bus","restaurants","takes","ferry","manhattan","lines","beach","close","closest","prospect","trains","easy","lots","min","ave","grocery","st","street","time","brooklyn","apartment","shops","subways","minutes","minute","center","broadway","main","store","nice","food","local","penn","plenty","clean","highly","avenue","grand","host","neighborhood","stops","stores","super","walk","convenient","coffee","multiple","nearby","bars","downtown","island","lirr","recommend","access","safe","soho","parking","hospital","bedford","major","shopping","utica","williamsburg","check","stadium","stay","straight","supermarket","mins","flushing","astoria","av","bridge","depending","perfect","building","communication","express","makes","mta","public","amazing","bed","city","couple","market","met","museum","terminal","yankee","quiet","staten","union","tons","beautiful","columbia","comfortable","transit","brings","empire","entrance","location","chinatown","direct","myrtle","space","village","barclays","buses","citi","directly","loved","nyc","quick","transportation","university","catch","district","east","free","italy","lot","marcy","north","ride","river","supermarkets","surrounded","5th","connects","cute","deli","easily","foods","friendly","home","hosts","laundromat","tube","walking","west","cafes","chelsea","franklin","house","lovely","nostrand","rockaway","short","washington","world","ac","airport","atlantic","corner","garden","pretty","ralph","target","125th","fantastic","lga","madison","reach","recommended","sq","theater","trade","wifi","woodside","accessible","amenities","coney","heart","heights","hudson","huge","jmz","junction","kingston","pier","private","taking","theatre","uptown","water","arena","block","botanical","circle","columbus","excellent","field","fun","halsey","hour","kitchen","laguardia","msg","plaza","restaurant","rockefeller","roosevelt","tennis","underground","30th","bar","blvd","boardwalk","breakfast","connect","connecting","convenience","daughter's","dumbo","ferries","graham","jamaica","jefferson","located","queens","red","spots","ten","town","trader","venue","view","wonderful","york","absolutely","airbnb","apt","attractions","battery","bodegas","bring","bryant","campus","comfy","cool","daughter","distance","ditmars","family","fast","fort","fulton","green","ideal","joe's","laundry","leads","links","mall","morning","numerous","provided","son's","system","throop","transport","walked","waterfront","wilson","2,3","ace","air","awesome","bad","bathroom","bay","billie","blocks","blue","cafe","commute","cozy","cvs","domino","dunkin","eat","enjoyed","flatbush","forest","gardens","greene","greenpoint","groceries","jackson","javits","jean","king","lincoln","loads","m60","mccarren","mirage","neighbourhood","note","parkway","port","rail","shop","south","spacious","that'll","theatres","unit","wholefoods","50th","7th","authority","bagel","bakery","barclay","bedroom","bike","bodega","brighton","busy","canal","cheap","clinton","college","connected","connections","decent","direction","entrances","experience","extremely","fairly","found","fresh","ft","gates","george","harlem","helpful","herald","highline","hipster","including","jfk","key","kings","lead","library","literally","love","memorial","metropolitan","michael","middle","midtown","montrose","natural","night","options","pizza","price","riverside","road","runs","slope","starbucks","steinway","steps","streets","strip","travel","uber","ubs","views","yellow","20min","46th","86th","9th","airtrain","ample","appartment","astor","bagels","bayside","bedrooms","bergen","beth","beverly","bit","botanic","boutiques","bunch","bushwick","called","car","checking","choice","citibike","classon","closet","connection","court","decor","dekalb","delancey","dollar","euclid","explore","financial","giving","greenwich","grey","head","heading","hill","hills","history","hub","jessica","joes","john","lex","liberty","liquor","lives","locations","lorimer","markets","museums","neighbors","nw","ny","nyu","ocean","outlets","owner","parks","pharmacy","pictures","plan","range","responded","rooftop","rumc","sarah","shared","shorter","size","stayed","staying","theaters","ton","top","totally","wyckoff","yards","10min","135th","157th","15ish","2nd","33rd","34th","35min","36th","4,5","4,5,6","4th","52nd","53st","61st","74th","82nd","actual","allowed","allowing","amy","appreciated","approx","army","asad","asian","bakeries","barkley","barnard","beds","bigger","bikes","boulevard","bound","brewery","brewing","bronx","bronxcare","brought","businesses","bust","cat","cathedral","caught","centre","checked","checkin","chill","china","chris","closes","collective","commercial","cons","cost","david","day","dining","dinner","diverse","dock","dorm","drag","drink","drinks","drive","drug","easier","eastern","eateries","eating","eats","einstein","elizabeth","elmhurst","enjoy","entertainment","entire","essential","essex","expect","famous","favorites","fifteen","fine","flexible","floor","footbridge","forward","friend","furnished","game","gary","gate","gorgeous","grab","grounds","guardia","gun","half","handy","happening","heads","heaps","hell's","helped","henry","hewes","honestly","hope","hospitals","howard","hr","husband","incredible","india","insanely","institute","interior","ish","jason","jewel","jz","katya","kew","kids","kosciuszko","la","lafayette","leading","left","lexington","life","lively","luna","lunch","malls","manahattan","maria","mat","means","meant","métro","mike","mike's","mile","moma","mornings","morningside","nassau","neighborhoods","noisy","nyp","option","path","peaceful","peaches","pick","piers","platform","pleasant","pond","popular","pratt","president","promenade","proper","queensboro","railway","randall","rego","rentals","residential","responsive","rest","retail","ridge","rosedale","round","secure","selection","service","shuttle","sights","sinai","sisters","site","smorgasburg","son","spent","spot","spring","starbuck","stars","start","statue","strips","suitable","sunset","surrounding","tacos","terminals","terrible","timesquare","tourist","trainstation","travelling","travels","trendy","van","variety","visit","wait","walkable","walkway","wall","weekends","wide","window","winthrop","worth","yummy","zoo","1,2,3","102nd","110th","116th","138st","13ish","145th","149th","14th","15min","163rd","167th","18th","191st","1av","1h","1hr","2,5","2.75","20ish","20mins","233rd","24hr","25min","2⃣it's","30av","30ish","30min","30minute","35minutes","36nd","39th","3min","3mins","40mins","40th","41st","45min","49th","4p","59th","72nd","79th","8th","96th","abc","abena","accessibility","accommodations","accurate","acebd","acel","acres","action","activities","actuality","adam","added","addition","adela","agnes","airtran","aj","albans","albeit","aldi's","alex","alexandre","alfredo","allison's","ally","alot","alphabet","amd","amenity","american","amiee","amir's","amish","amtrak","amusement","andrew","aníbal","anna","annika","answers","antonella","aparment","apartments","apollo","approximately","aracelis","armstong","aron","arthur","arverne","ashe","attending","attraction","auburndale","aurelien","austin","autumn's","avoid","avs","axel","b15","b17","b35","b46","baby","backley","bag","bam","bank","banks","barclay's","barcleys","base","basically","bath","bathing","bazar","beat","bedstuy","bellevue","benches","beto","beverley","biggest","bjk","bliss","bloomingdales","bluff","bnb","bnbs","board","boarding","bonus","borough","boroughs","bother","bowery","box","boyfriend","bradford","brand","breweries","brian","briarwood","bride","broadwalk","brookdale","brooke","brooklyn's","brown","brownstone","brownstones","built","bull","burnside","bushwick's","busses","busstop","bustling","butchers","buy","cab","cafe's","calm","camille","campuses","cannoli","carla","carnarsie","carnegie","carol","carrol","carroll","casablanca","cast","catching","cathy","ccny","cecilia","centrl","chaim","charging","charming","chauncey","cheaper","chick","children","children's","chinese","chloe","chloe's","choices","church","cil","cindy","citibikes","citifield","cleanliness","clinic","clinics","closer","clubs","coast","coffe","coffeeshops","cohost","cold","colin","collen","columbia's","common","communicated","communicative","community","commuting","company","complaints","complex","complimentary","concourse","condition","condo","conection","confort","contact","conv","conveniently","convinience","convinient","cornershop","corona","cortelyou","costco","cosy","cougars","counter","couples","courts","cozzy","crepe","crescent","crossing","crown","cruise","cuisine","cultural","curfew","cutting","cyclones","cypress","cyprus","daily","damaris","daniel","daniel's","danielle","darrell","daugher","daughters","dawn","deal","def","delicious","delis","deliveries","department","desirable","desmar","destinations","development","didnt","dim","diner","diners","directions","dirk","disadvantage","district.hope","ditmar","doable","dollor","don's","donald","donut","donut's","donuts","door","dorina","douglas","dounkin","dounuts","downstairs","dozen","dozens","dumplings","dyckman","earl","eas","easiest","ed","edelmira","edgar","edge","edmund","edna","eduardo","effortlessly","el","electric","elevators","eleven","eliana","elisa","ellis","eltingville","emil","emmons","emmy","enabled","enables","entertainments","entry","episcopal","equipped","erica","esplanade","essentially","ethiopian","evening","event","events","evers","everyday","exam","excels","eyal","eye","fabulous","famouse","fanny","fare","father","favorite","feels","felicia","felix","fernando","ferry's","fila","finally","fitness","flat","flatiron","flea","flushing's","fourteen","francesca","francis","freedom","freeman","frequent","friend's","fruits","frustrations","furniture","fyi","gain","garage","gated","gateway","generously","george's","gimme","girlfriend","gladys","god","gotta","gowanus","graceful","grandchildrens","grandkids","greek","greenline","greenway","gregory","ground","guest","guggenhiem","gym","gyms","haat","haiti","hall","halset","hamilton","harbor","harry","hassle","health","heating","height","helps","henri","hernandez","hidden","highlight","highlights","highway","hind","hip","hire","hispanic","historic","hosp","hospitality","hostess","hot","hotspots","hundreds","hunters","hunts","hustle","hyacinth","i.e","ian","ice","iconic","ihop","immediately","included","increadibly","independent","indian","industry","inexpensive","infront","international","inviting","iron","isnt","issue","izabel","jacobi","jaime","jamie","jan","jared","javier","jc","jeff","jennifer","jenny","jermaine","jermaine's","jesper","jess","jimmy","joanna","john's","johnnie","johny","jon","jordan","jose","journey","joy","juice","julieta","jump","kai","kara","karlyle","kate","katz","kayaking","ken","kerri","kinds","kingsbridge","kingsbrook","kiosk","kiriko","kopitiam","korea","koreatown","kosciusko","kosher","krzysztof's","ktown","kym","lakisha","lakshmee","lana","lance","lane","latin","laurelton","law's","layers","leaves","lebanon","legit","leisure","lennon's","lennox","lenox","les","levain","level","lewis","lic","light","lily","lina","lined","listing","live","living","liz","lizzie","llittle","llyod","locust","loft","lorenzo","lot's","louis","lower","ludina","luz","m1","m86","macy's","macys","maelena","magnolia","mahattan","maimonides","managed","manathan","manhatten","manor","manuel","marcelo","marcys","marisa","mark","mark's","marks","marlene","marlow's","mask","massive","matt","mattresses","maura","maurice","max","mc","mccaren","mcdonald's","mcdonalds","mcds","mcglorick","meadows","medgar","medical","meghan's","metres","metro's","metros","michal","michelle","mid","miki's","mil","milk","milstein","mini","mirela","miss","mizue","mjlg","mns","modern","momofuku","mon","monika","montefiore","morgan","moses","mother's","mount","move","moving","ms","msk","mt","murray","murry","music","musicals","musuem","nanonte","natalia","nate","nathan's","national","navigate","navy","neared","necessities","ned","neil","nereid","newkirk","nightlife","niven","noise","nolita","noodle","nook","nordstrom","norman","norstand","nostram","noted","notice","nr","observatory","offers","office","oil","omat","operating","orange","ottos","outpatient","outstanding","overlooks","paco","paddle","palace","pamela's","parents","park.green","park.will","parkside","partner","party","pass","passing","past","pastry","pathmark","patrick","patrick's","paula","pedestrian","pelham","people","perfection","perfectly","perk","perks","peter","pharmacies","philip","photos","pickleball","pickup","pizzas","pkwy","pl","planet","platforms","playgrounds","pleased","pleasure","plethora","popeyes","popsect","porth","potter","practically","premium","prepared","presbyterian","priced","primary","prime","privacy","proved","provide","ps","puppy","purple","q23","q45","q58","q59","q60","q65","q72","quaint","quality","quarters","queen","queensbridge","quicker","quincy","rachel","radio","railroad","rails","rarely","rasha","rated","raymond","reachable","real","reastrants","rebbe's","reccomend","redhook","reflects","refreshed","remember","renata","rent","rental","replies","responder","response","responses","resting","resto","restraurants","restuarants","resturants","review","revisit","ri","richmond","rides","riding","rigoberto","rippers","rite","riverdale","roberta","robertas","rockfeller","rodolfo","rooster","rosie","rosy's","rotating","roughly","route","row","rr","ruin","rush","russ","sam","samantha","samira","samuel","sara","saratoga","save","sbway","scene","scenic","scott","scross","scrumptious","seafood","search","sebastian","sells","seperate","sephora","served","shakima","shampoo","share","sharing","sheena","shepherd","ships","shoprite","shoreline","shower","si","siani","siclan","silvia","simple","simplistic","single","sir","sirr","situation","sized","skating","sleeping","slept","slightly","smalls","smorgasbord","sol","solid","soo","soup","spa","special","spend","sqare","squared","srdjan","stadiums","stain","staion","stair","stan","stand","star","starr","station.there","stays","step","sterling","stn","stocked","strenuous","studio","studios","stuyvesant","subeay","subway.communication","subway.it","subway.moe","subway.the","subway.we","subwayline","subwaystation","suggestions","sum","sun","sunny's","supermarkt","superstore","surf","surfer's","surprise","surprisingly","surround","sutter","swann","sweet","sylvias","taco","talk","tania","taste","tasty","taxi","teacher's","terrace","thetheaters","ticked","tidy","tim","timo","tompkins","tour","tournament","tours","tower","townhouse","trail","trails","train.highly","train.we","train7","tram","tran","transfer","transfers","translations","traveling","tremont","tren","tribeca","trips","trivial","trucks","tryon","ts","turnpike","twenty","uber's","unable","und","unexpected","unhq","unit's","united","unsafe","upper","usta","utilize","utopia","vanderbilt","vanguard","varies","verity","vernon","veronica","vessel","vibrant","vinneth","virginia","visited","vivian","vladimir","walgreens","walter","wander","wark","warrior","washer","washing","wburg","weather","wegmans","welcoming","westchester","whiskers","wholefood","wich","williamburg","williamsburg's","williamsburgs","willoughby","wilson's","windows","windsor","wine","winter","woodhull","wtc","wyck","yankees","yard","yay","york's","zabars"],"freq":[3501,1694,1225,468,426,416,305,284,241,213,184,178,168,158,157,135,124,116,112,106,106,106,103,101,99,90,84,78,75,74,72,70,67,67,67,65,59,57,53,53,52,48,47,47,45,45,43,43,41,41,41,40,40,40,40,39,38,37,37,37,36,36,35,35,34,33,33,33,32,31,29,29,28,28,28,27,27,27,27,27,26,25,24,24,24,23,23,22,22,22,22,22,22,21,21,21,21,21,21,21,21,21,20,20,20,19,18,18,18,18,17,17,17,17,16,16,16,16,16,15,15,15,15,15,15,15,15,15,14,14,14,14,14,14,14,14,14,14,14,14,13,13,13,13,13,13,13,13,13,13,13,13,13,12,12,12,12,12,12,12,12,12,12,11,11,11,11,11,11,11,11,10,10,10,10,10,10,10,10,10,10,10,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"fontFamily":"Segoe UI","fontWeight":"bold","color":"random-dark","minSize":0,"weightFactor":0.051413881748072,"backgroundColor":"white","gridSize":0,"minRotation":-0.785398163397448,"maxRotation":0.785398163397448,"shuffle":true,"rotateRatio":0,"shape":"circle","ellipticity":0.65,"figBase64":null,"hover":null},"evals":[],"jsHooks":{"render":[{"code":"function(el,x){\n                        console.log(123);\n                        if(!iii){\n                          window.location.reload();\n                          iii = False;\n\n                        }\n  }","data":null}]}}</script>
 	</body>
 </html>
 
 
 
-Walking from/to **subway** are most mentioned in reviews, followed by **train**. 
+Walking from/to **subway (station)** are most mentioned in reviews, followed by **train station**. 
 
-## <a id="sentiment">6. Sentiment Analysis</a>
+## 6. Sentiment Analysis
 
 Seems most common bigrams and trigrams in reviews are positive words, such as "highly recommended", does that mean most reviews are positive? What may cause negative reviews?
 We can get the answers by sentiment analysis. 
 
 First of all, let's find out the most positive and negative words, with the help of [AFINN lexicon](https://search.r-project.org/CRAN/refmans/textdata/html/lexicon_afinn.html).
 
-### <a id="p_n_words">6.1 Positive and negative words</a>
-
-#### English
+### 6.1 Positive and negative words
 
 
 ```R
 options(repr.plot.width = 12, repr.plot.height = 9)
 
-words <- df_reviews_en %>%
+words <- df_reviews %>%
   unnest_tokens(word, reviews) %>%
   anti_join(stop_words)
 
@@ -1021,67 +666,18 @@ contributions %>%
   ggplot(aes(word, contribution, fill = contribution > 0)) +
   geom_col(show.legend = FALSE) +
   coord_flip() +
-  labs(x = "Sentiment value * number of occurrences", title = "Top 40 English words with the greatest contributions to positive/negative sentiment")
+  labs(x = "Sentiment value * number of occurrences", title = "Top 40 words with the greatest contributions to positive/negative sentiment")
 ```
-
-    
-![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_72_1.png)
-    
-
-
-When "blocks" is noun, it's no longer a negative word. So there is probably only one negative word "bad" in the top 40 words, and with small negative sentiment value.
-
-#### French and Spanish
-
-
-```R
-# get French/Spanish sentiment lexicon from Kaggle
-# link: https://www.kaggle.com/datasets/rtatman/sentiment-lexicons-for-81-languages
-es_lexicon <- read_csv("data/spanish-sentiments-lexicon.csv")
-fr_lexicon <- read_csv("data/french-sentiments-lexicon.csv")
-
-words_es_fr <- df_reviews_es_fr %>%
-  unnest_tokens(word, reviews) %>%
-  anti_join(stop_words)
-
-es_contributions <- words_es_fr %>%
-  inner_join(es_lexicon, by = "word")
-
-fr_contributions <- words_es_fr %>%
-  inner_join(fr_lexicon, by = "word")
-
-es_fr_contributions <- es_contributions %>% 
-  bind_rows(fr_contributions) %>% 
-  count(language, word, value) %>% 
-  mutate(contribution = n * value)
-
-es_fr_contributions %>%
-  group_by(language) %>% 
-  top_n(20, abs(contribution)) %>%
-  ungroup() %>% 
-  mutate(word = reorder(word, contribution)) %>%
-  ggplot(aes(word, contribution, fill = contribution > 0)) +
-  geom_col(show.legend = FALSE) +
-  coord_flip() +
-  facet_wrap(~ language, scales = "free") +
-  labs(x = "Sentiment value * number of occurrences", 
-       title = "Top 20 French/Spanish words with the greatest contributions to positive/negative sentiment in reviews ")
-```
-
-    
-![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_75_1.png)
+ 
+![png](/figs/airbnb-reviews-sentiment-analysis_files/airbnb-reviews-sentiment-analysis_50_1.png)
     
 
+There is only one negative word "bad" in the first 40 words, and the negative sentiment value is very small.
+Does that mean most reviews are positive? The answer is uncertain. We still need to know the context of these words. For example, when a positive word is preceded by a negative word like "not", it becomes a negative word.
 
-The results of sentiment analysis highly depends on the accuracy of lexicons, however, the French and Spanish lexicons found online are not as reliable as the well-known AFINN lexicon, so we cannot gurantee the the result's accuracy of French and Spanish reviews, but overall, there are more positive words than negative ones, 
+### 6.2 Context of positive/negative words
 
-For instance, French word "tout" contributed most negative sentiment values, but it means "everything", is it a negative word?
-
-Further more, another important question is what's the context of these words? For example, when a positive word is preceded by a negation word like "not", it will lead to neutral or even negative connotation.
-
-### <a id="context">6.2 Context of positive/negative words</a>
-
-Due to the smaller size of French and Spanish reviews, they are not as informative as English reviews. Therefore, from this section, we will focus on English reviews only. Let's pick 6 common words "don't", "no", "not", "nothing", "wasn't", "without" and check how often words are preceded by them.
+Let's pick 6 common words "don't", "no", "not", "nothing", "wasn't", "without" and check how often words are preceded by them.
 
 
 ```R
@@ -1115,26 +711,29 @@ rank_context_words <- function(data_separated, negation_words, n_rank, title) {
 
 negation_words <- c("wasn't", "no", "not", "nothing", "without", "don't")
 rank_context_words(review_separated, negation_words, 10,
-                   title = paste("Top 10 English positive/negative words preceded by\n",
+                   title = paste("Top 10 positive/negative words preceded by\n",
                                  'negations such as "don\'t", "no", "not", "nothing", "wasn\'t", "without"'))
 ```
 
 
     
-![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_78_0.png)
+![png](/figs/airbnb-reviews-sentiment-analysis_files/airbnb-reviews-sentiment-analysis_53_0.png)
     
 
 
-The bigrams **no problems** and **no problem** are the largest sources of misidentifying a word as negative, and the largest source of incorrectly classified positive sentiment is **not recommend**.
+The bigrams **no problems** and **no problem** are the largest sources of misidentifying as negative sentiment, and the largest source of incorrectly classified positive sentiment are **not recommend** and **not clean**.
 
-### <a id="link_negative">6.3 Words that are linked to negative words</a>
+### 6.3 Words that are linked to negative words
 
-Why some reivews contain negative words? What disastified those reviewers? Let's use the [udpipe](https://bnosac.github.io/udpipe/docs/doc1.html) package to find out what words are are associated with those negative words.
+Why some reivews contain negative words? What disastified those reviewers? Let's use the [udpipe](https://bnosac.github.io/udpipe/docs/doc1.html) package to find out what words are are associated with those negative words. It's a time-consuming to process all 743K+ reviews, here let's focus on its random sample with 10% of the original data. The result should be very close to the original one.
 
 
 ```R
+df_reviews_subset <- df_reviews %>% 
+  sample_n(round(nrow(df_reviews)/10,0), replace = FALSE, prob = NULL)
+
 # step 1: tokenizing
-udpipe_tokens <- df_reviews_en %>% 
+udpipe_tokens <- df_reviews_subset %>% 
   rename(doc_id = id, text = reviews) %>%
   udpipe("english-gum")
 ```
@@ -1168,46 +767,56 @@ reasons <- sentiments %>%
 
 ```R
 plot_negative_network <- function(reasons) {
-# group by negative words and parent words
-# amod: adjectival phrase that serves to modify the noun
-reasons_filtered <- filter(reasons, dep_rel %in% "amod") 
-word_cooccurences <- reasons_filtered %>% 
-  group_by(lemma, lemma_parent) %>%
-  summarise(cooc = n()) %>%
-  arrange(-cooc) %>% 
-  ungroup()
+  # group by negative words and parent words
+  # amod: adjectival phrase that serves to modify the noun
+  reasons_filtered <- filter(reasons, dep_rel %in% "amod") 
+  word_cooccurences <- reasons_filtered %>% 
+    group_by(lemma, lemma_parent) %>%
+    summarise(cooc = n()) %>%
+    arrange(-cooc) %>% 
+    ungroup()
 
-# distinguish negative words from parent words
-vertices <- bind_rows(
-  data_frame(key = unique(reasons_filtered$lemma)) %>% 
-    mutate(in_dictionary = if_else(key %in% polarity_terms$term, 
+  # distinguish negative words from parent words
+  vertices <- bind_rows(
+    data_frame(key = unique(reasons_filtered$lemma)) %>% 
+      mutate(in_dictionary = if_else(key %in% polarity_terms$term, 
                                    "in_dictionary", "linked-to")),
-  data_frame(key = unique(setdiff(reasons_filtered$lemma_parent, reasons_filtered$lemma))) %>% 
-    mutate(in_dictionary = "linked-to"))
+    data_frame(key = unique(setdiff(reasons_filtered$lemma_parent, reasons_filtered$lemma))) %>% 
+      mutate(in_dictionary = "linked-to"))
 
-# visualization of top 30 pairs of negative words and parent words
-cooc <- head(word_cooccurences, 30)
-set.seed(1)
-cooc %>%  
-  graph_from_data_frame(vertices = filter(vertices, key %in% c(cooc$lemma, cooc$lemma_parent))) %>%
-  ggraph(layout = "fr") +
-  geom_edge_link0(aes(edge_alpha = cooc, edge_width = cooc)) +
-  geom_node_point(aes(colour = in_dictionary), size = 5) +
-  geom_node_text(aes(label = name), vjust = 1.8, col = "darkgreen") +
-  labs(title = "Which words are linked to the negative terms",
-      subtitle = "Top 30 links with most cooccurrences") +
-  theme_void()       
+  # visualization of top 30 pairs of negative words and parent words
+  cooc <- head(word_cooccurences, 30)
+  set.seed(1)
+  cooc %>%  
+    graph_from_data_frame(vertices = filter(vertices, key %in% c(cooc$lemma, cooc$lemma_parent))) %>%
+    ggraph(layout = "fr") +
+    geom_edge_link0(aes(edge_alpha = cooc, edge_width = cooc)) +
+    geom_node_point(aes(colour = in_dictionary), size = 5) +
+    geom_node_text(aes(label = name), vjust = 1.8, col = "darkgreen") +
+    labs(title = "Which words are linked to the negative terms",
+         subtitle = "Top 30 links with most cooccurrences") +
+    theme_void()       
 }
 
 plot_negative_network(reasons)
 ```
 
-  
-![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_82_1.png)
+    [1m[22m`summarise()` has grouped output by 'lemma'. You can override using the
+    `.groups` argument.
+    Warning message:
+    “`data_frame()` was deprecated in tibble 1.1.0.
+    Please use `tibble()` instead.
+    [90mThis warning is displayed once every 8 hours.[39m
+    [90mCall `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.[39m”
+
+
+
+    
+![png](/figs/airbnb-reviews-sentiment-analysis_files/airbnb-reviews-sentiment-analysis_57_1.png)
     
 
 
-According to the graph above, "short walk" has the strongest co-occurrence as negative words as "short" in `polarity_terms` has negative score, however, according to what we've learned, "short walk/distance/trip" is positive.
+According to the graph above, "short walk" has the strongest co-occurrence as negative words with term "short", however, those words are not negative in real life. For example, "short trip/stay" is neutral while "short distance" is probably positive.
 
 Similarly, "incredible host" is also positive and "low manhattan" is a noun. We need to filter out those words to get more accurate network graph.
 
@@ -1221,14 +830,19 @@ reasons_filtered <- reasons %>%
 plot_negative_network(reasons_filtered)
 ```
 
-  
-![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_84_1.png)
+    [1m[22m`summarise()` has grouped output by 'lemma'. You can override using the
+    `.groups` argument.
+
+
+
+    
+![png](/figs/airbnb-reviews-sentiment-analysis_files/airbnb-reviews-sentiment-analysis_59_1.png)
     
 
 
-This time, we did find something meaningful from the graph above. **small room** is the biggest reason of negative reviews, followed by small apartment/space and good place (from reviewers who might don't agree it's a good place). Besides, Airbnb hosts might also need to take care of issues such as **hot water** and **natural light**. 
+This time, we did find something meaningful from the graph above. **small room** is the biggest reason of negative reviews, followed by small apartment/space, small place, and good place (from reviewers who might don't agree it's a good place). Besides, Airbnb hosts might also need to take care of issues such as **hot water** and **natural light**. 
 
-### <a id="emotions">6.4 Emotions</a>
+### 6.4 Emotions
 
 We can get sentiment scores of reviews based on the [
 NRC Word-Emotion Association Lexicon](http://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm), which provides a list of English words and their associations with eight basic emotions (anger, fear, anticipation, trust, surprise, sadness, joy, and disgust) and two sentiments (negative and positive).
@@ -1238,9 +852,9 @@ NRC Word-Emotion Association Lexicon](http://saifmohammad.com/WebPages/NRC-Emoti
 options(repr.plot.width = 12, repr.plot.height = 6)
 
 # download the lexicon from http://saifmohammad.com/WebDocs/Lexicons/NRC-Emotion-Lexicon.zip
-# save it to data folder
+# save it to file/nrc/NRC-Emotion-Lexicon/NRC-Emotion-Lexicon-v0.92/
 words_nrc <- words %>%
-  left_join(textdata::lexicon_nrc(dir="data", delete=TRUE, manual_download = TRUE)) %>% 
+  left_join(textdata::lexicon_nrc(dir="file", delete=TRUE, manual_download = TRUE)) %>% 
   filter(!is.na(sentiment))
 
 words_emotions <- words_nrc %>% filter(!sentiment %in% c("positive", "negative"))
@@ -1270,12 +884,16 @@ barplot_sentiment <- function(df, title) {
 barplot_sentiment(words_emotions, "Emotions of NYC Airbnb Reviews")
 ```
 
+    [1m[22mJoining, by = "word"
+
+
+
     
-![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_87_1.png)
+![png](/figs/airbnb-reviews-sentiment-analysis_files/airbnb-reviews-sentiment-analysis_62_1.png)
     
 
 
-The top 3 sentiment/emotions are **positive**, **trust**, and **joy**, what about the positive and negative valence?
+The top 3 sentiment/emotions are **trust**, **joy**, and **anticipation**. What about the positive and negative valence?
 
 
 ```R
@@ -1286,17 +904,60 @@ barplot_sentiment(words_sentiments, "Positive/Negative Sentiment of NYC Airbnb R
 
 
     
-![png](/figs/airbnb-nyc-sentiment-analysis_files/airbnb-nyc-sentiment-analysis_89_0.png)
+![png](/figs/airbnb-reviews-sentiment-analysis_files/airbnb-reviews-sentiment-analysis_64_0.png)
     
 
 
-Positive scores are much higher than negative scores.
+Positive scores are much higher than negative scores. How did that change over time?
 
-## <a id="conclusions">7. Conclusions</a>
 
-In this project, we walk through a step-by-step introduction to text mining and sentiment analysis of NYC, Airbnb reviews, and found something interesting:
+```R
+options(repr.plot.width = 14, repr.plot.height = 4)
+# get percentage of sentiments group by year
+sentiment_pcnt <- words_sentiments %>%
+    mutate(quarter = format(date, "%Y")) %>%
+    group_by(year) %>% 
+    count(sentiment) %>%
+    arrange(year, desc(n)) %>% 
+    mutate(year = as.numeric(year),
+           sentiment = reorder(sentiment, n), 
+           percentage = round(n/sum(n)*100, digits = 2)) %>% 
+    rename(scores = n)
+# percentage of positive reviews
+g1 <- sentiment_pcnt %>% 
+  filter(sentiment %in% c("positive")) %>% 
+  ggplot(aes(x=year, y=percentage)) + 
+  geom_line(color="#00BFC4", size=2) + 
+  theme(legend.position="none") +
+  labs(title = "Percentage of Positive Reviews Over Time")
+# percentage of negative reviews
+g2 <- sentiment_pcnt %>% 
+  filter(sentiment %in% c("negative")) %>% 
+  ggplot(aes(x=year, y=percentage)) + 
+  geom_line(color="#F8766D", size=2) + 
+  theme(legend.position="none") +
+  labs(title = "Percentage of Negative Reviews Over Time")
 
-- The main languages are **English** (90.1%), **Spanish** (3.1%), and **French** (2.6%).
-- Reviews are more **positive** (87.8%) than negative (12.2%), the strongest emotions of reviews are **Trust** and **Joy**.
-- The **location** of the listing is very important to guests, they care about the **walking distance** to **subway station**, and most often mentioned **5-10 minute walk**.
-- Negative reviews are strongly associated with limited space, such as **small room** and **small apartment**, followed by not good location.
+grid.arrange(g1, g2, ncol = 2) 
+```
+
+
+    
+![png](/figs/airbnb-reviews-sentiment-analysis_files/airbnb-reviews-sentiment-analysis_66_0.png)
+    
+
+
+In 2018-2022, the percentage of positive reviews decreased first and then increased, while the percentage of negative reviews increased first and then decreased. Overall, the absolute percentage change was only 0.6%.
+
+## 7. Results
+
+In this project, we walked through a step-by-step introduction to text mining and sentiment analysis of NYC, Airbnb reviews, and found something interesting:
+
+- The **location** of the listing was very important to guests, they cared about the **walking distance** to **subway station**, and most often mentioned **5 minute walk** or **10 minute walk**. Besides, **clean** and **host** were also high frequency words.
+- Reviews were more **positive** (88.9%) than negative (11.1%), the strongest emotions of reviews was **Trust** and **Joy**, which accounted for 61% of all emotions.
+- Negative reviews were associated with limited space, where **small room** was strongly linked to negative reviews, followed by **small place** and **small apartment**. Besides, hosts also need to take care of issues such as hot water and natural light.
+
+## 8. Conclusion
+
+This study focused on analyzing 743K+ reviews of Airbnb in New York City, 2018-2022. Exploratory data analysis was conducted to find the trend of number of reviews. Text mining and sentiment analysis was further implemented to find the most popular words, trend of popularity, reasons for negative reviews, and overall sentiment. This study can help lodging companies and hosts better understand user needs and improve customer satisfaction.
+

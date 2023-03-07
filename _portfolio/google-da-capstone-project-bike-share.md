@@ -1,5 +1,6 @@
 ---
 title: "Chicago Bike-Share Analysis"
+subtitle: "Capstone of Google Data Analytics Certificate"
 header:
   image: /assets/images/bike-share.png
   caption: "Photo credit: [**Tareq Ismail**](https://unsplash.com/photos/iCIEg2SX2IA)"
