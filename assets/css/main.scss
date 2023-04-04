@@ -116,6 +116,37 @@ a {
     } 
   }
 }
+.portfolio-projects {
+  .row {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 2rem;
+    align-items: center;
+  }
+
+  .img-section {
+    width: 40%;
+    margin-right: 5%;
+  }
+
+  .img-section img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .desc-section {
+    width: 54%;
+  }
+
+  .desc-section h2 {
+    margin-top: 0;
+  }
+
+  .desc-section p {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+}
 
 /* Posts */
 

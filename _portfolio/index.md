@@ -1,63 +1,71 @@
 ---
 classes: wide
 permalink: /portfolio/index.html
-last_modified_at: 2023/03/05
-
-
-feature_rows:
-- row_title: "Selected Projects"
-  content:
-  - image_path: /assets/images/portfolio/osteoporosis.png
-    alt: "Osteoporosis Prediction"
-    title: "Machine Learning: Prediction of Osteoporosis Using NHANES Data"
-    excerpt: "Benchmarking Logistic Regression, Support Vector Machine, Random Forest, and Neural Networks"
-    url: "https://github.com/eeliuqin/Osteoporosis-Analysis-and-Prediction-on-NHANES-Data"
-
-  - image_path: /assets/images/portfolio/hospital.png
-    alt: "Inpatient Readmission Rates"
-    title: "Analysis of California 30-Day Inpatient Readmission Rates"
-    excerpt: "Identifying associations between readmission rates and patient demographics, expected payer, and geographic location"
-    url: "https://github.com/eeliuqin/california-readmission-rate-analysis"
-
-  - image_path: /assets/images/portfolio/airbnb-negative-network.png
-    alt: "Airbnb Reviews"
-    title: "Text Mining and Sentiment Analysis for NYC Airbnb Reviews"
-    excerpt: "Why people leave positive/negative reviews?"
-    url: "/portfolio/airbnb-reviews-sentiment-analysis/"
-
-  - image_path: /assets/images/portfolio/bike-share-routes.png
-    alt: "Bike Share"
-    title: "Case Study | Chicago Bike-Share Analysis"
-    excerpt: "How to turn casual riders to annual members?"
-    url: "/portfolio/google-da-capstone-project-bike-share/"
-
-
-- row_title: "Data Visualization"
-  content:
-  - image_path: /assets/images/portfolio/tableau-ca-hospitalization.png
-    alt: "Tableau Hospitalization Dashboard"
-    title: "Hospitalization Rates of Selected Adverse Hospital Events in California"
-    excerpt: "Which potentially preventable event occurred the most?"
-    url: "https://public.tableau.com/app/profile/qinliu/viz/CaliforniaHospitalizationCountsandRatesofSelectedAdverseHospitalEvents/Dashboard1"
-    btn_label: "View it in Tableau"
-    btn_class: "btn--primary"
-
-  # - image_path: /assets/images/portfolio/tableau-ca-inpatient-mortality.png
-  #   alt: "Tableau Inpatient Mortality Dashboard"
-  #   title: "Hospital Inpatient Mortality Procedures and Conditions"
-  #   excerpt: "Where are hospitals with better/worse than expected located in California, 2010-2020?"
-  #   url: "https://public.tableau.com/app/profile/qinliu/viz/CaliforniaHospitalInpatientMortalityProceduresandConditions/Dashboard"
-  #   btn_label: "View it in Tableau"
-  #   btn_class: "btn--primary"
-
-  - image_path: /assets/images/portfolio/tableau-pev-sales.png
-    alt: "Tableau EV Sales Dashboard"
-    title: "2010-2019 United States Plug-in Electric Vehicles Sales"
-    excerpt: "Is Tesla leading in electric vehicles?"
-    url: "https://public.tableau.com/app/profile/qinliu/viz/2010-2019U_S_Plug-inElectricVehiclesPEVSales/PEVSalesStory"
-    btn_label: "View it in Tableau"
-    btn_class: "btn--primary"  
+last_modified_at: 2023/04/04
 
 ---
 
-{% include feature_rows %}
+Below are some of my projects and you can find more on my [GitHub](https://github.com/eeliuqin).
+
+<div class="portfolio-projects">
+  <div class="row">
+    <div class="img-section">
+      <img src="/assets/images/portfolio/web-app-osteo.png" alt="Web App of Osteoporosis Prediction">
+    </div>
+    <div class="desc-section">
+      <h2>Osteoporosis Prediction</h2>
+      <p>Designed a machine learning web app for osteoporosis prediction. The app is based on Neural Networks that being trained by the National Health and Nutrition Examination Survey (NHANES) data.</p>
+      <p>
+        <b>Skills</b>: Machine Learning, Python, Web Application
+      </p>
+      <p>
+        <a target="_blank" href="https://github.com/eeliuqin/Osteoporosis-Analysis-and-Prediction-on-NHANES-Data">Code</a>
+      </p>
+      <p>
+        <a target="_blank" href="https://osteoporosis-prediction.streamlit.app/">Web App</a>
+      </p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="img-section">
+      <img src="/assets/images/portfolio/videos-dashboard.png" alt="QuickSight Dashboard of Trending Videos">
+    </div>
+    <div class="desc-section">
+      <h2>Youtube Trending Videos ETL Pipeline and Analysis</h2>
+      <p>Built a serverless ETL pipeline to get information of Youtube trending videos every day. Data is stored in AWS RDS MySQL database, analyzed by SQL, and visualized by AWS QuickSight.</p>
+      <p><b>Skills</b>: Data collection with API, Python, MySQL, AWS</p>
+      <p>
+        <a target="_blank" href="https://github.com/eeliuqin/Youtube-Trending-Videos-Pipeline-and-Analysis">Code</a>
+      </p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="img-section">
+      <img src="/assets/images/portfolio/ca-hos-tableau.png" alt="California Hospitalization Dashboard">
+    </div>
+    <div class="desc-section">
+      <h2>California Hospitalization Data ETL Pipeline</h2>
+      <p>Created an ETL pipeline for California hospitalization data. Data was collected from California Open Data and U.S. Census, saved in AWS S3, and visualized by Tableau.</p>
+      <p><b>Skills</b>: Python, SQL, AWS, Tableau</p>
+      <p>
+        <a target="_blank" href="https://github.com/eeliuqin/California-Hospitalization-Data-ETL-Pipeline">Code</a>
+      </p>
+      <p>
+        <a target="_blank" href="https://public.tableau.com/app/profile/qinliu/viz/CaliforniaHospitalizationCountsandRatesofSelectedAdverseHospitalEvents/Dashboard1">Tableau</a>
+      </p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="img-section">
+      <img src="/assets/images/portfolio/nyc.jpg" alt="New York City">
+    </div>
+    <div class="desc-section">
+      <h2>Airbnb Reviews Text Mining and Sentiment Analysis</h2>
+      <p>Performed text mining and sentiment analysis on Airbnb reviews in New York City, 2018-2022, to find out what guests cared about most and why they left negative reviews.</p>
+      <p><b>Skills</b>: R, Text Mining, Sentiment Analysis, EDA, Data Visualization</p>
+      <p>
+        <a target="_blank" href="https://github.com/eeliuqin/Airbnb-Reviews-Text-Mining-and-Sentiment-Analysis">Code</a>
+      </p>
+    </div>
+  </div>
+</div>
