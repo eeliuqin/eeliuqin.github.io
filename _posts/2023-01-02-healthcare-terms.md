@@ -20,10 +20,10 @@ In some public datasets, we may see both ICD-9-CM (before Oct 01, 2015) and ICD-
 It means Systematized Nomenclature of Medical Clinical Terms.
 ICD-10 is more aligned with SNOMED than ICD-9 (not granular enough), ICD-11 is claimed to be exactly aligned with SNOMED.
 
-### LONIC
-LOINC is the Logical Observation Identifiers Names and Codes maintained by the Regenstrief institute which is an Indianapolis based research organization, affiliated with Indiana University. [HL7](https://en.wikipedia.org/wiki/Health_Level_7) has identified LOINC as a preferred standard.
+### LOINC
+Logical Observation Identifiers, Names, and Codes (LOINC) is a standard that facilitates the exchange and pooling of results, such as laboratory tests or vital signs, for clinical care, outcomes management, and research. It's maintained by the [Regenstrief institute](https://www.regenstrief.org/) which is an Indianapolis based research organization, affiliated with Indiana University. LOINC has been endorsed by the American Clinical Laboratory Association and the College of American Pathologists, and identified by [HL7](https://en.wikipedia.org/wiki/Health_Level_7) as a preferred standard.
 
-It's an open source coding system, but it's usually used as an interoperability coding system when data exchange between systems. It's almost never natively within systems and this is a problem.
+It's an open source coding system, but it's usually used as an interoperability coding system when data exchange between systems. The [LOINC Website](https://loinc.org/guides/) provides guides to translate the local institution codes to the LOINC standard. However, it's almost never natively within systems and this is a problem.
 
 ### SNOMED vs. ICD
 Whereas ICD-10 is primarily (though not exclusively) a classification of diseases, SNOMED CT has codes covering not just diseases, but also clinical findings, symptoms, diagnoses, procedures, body structures, organisms and other aetiologies, substances, pharmaceuticals, devices and specimens.
@@ -31,7 +31,7 @@ Whereas ICD-10 is primarily (though not exclusively) a classification of disease
 ### SNOMED vs. LOINC
 According to [this article](https://danielvreeman.com/blog/2015/11/07/guidelines-for-using-loinc-and-snomed-ct-together-without-overlap/), LOINC codes are widely used to identify vital sign observations.
 SNOMED CT is a good source of codes for categorical answers to LOINC observables.
-In other words, LONIC focuses on questions while SNOMED focuses on anwers.
+In other words, LOINC focuses on questions while SNOMED focuses on anwers.
 
 ### AHRQ
 The Agency for Healthcare Research and Quality's
